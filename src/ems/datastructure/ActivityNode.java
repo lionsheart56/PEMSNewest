@@ -18,7 +18,7 @@ public class ActivityNode {
 		this.startEndTime = new HashMap<Integer, Integer>();
 		this.renew = false;
 	}
-
+	//Hi
 	public void setID(int i){ this.id = i;}
 
 	public int getID(){ return this.id; }
