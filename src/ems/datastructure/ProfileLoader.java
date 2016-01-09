@@ -64,15 +64,20 @@ public class ProfileLoader{
 					actNode.setSchedulability(schedulability);
 					// Periods <startTime, endTime>
 					Iterator periodIter = periodList.iterator();
-					while(periodIter.hasNext()){
-						Element periodElement = (Element)periodIter.next();
-						Node startTimeNode = periodElement.selectSingleNode("startTime");
-						Node endTimeNode = periodElement.selectSingleNode("endTime");
-						String[] startTimeToken = startTimeNode.getText().split(":");
-						String[] endTimeToken = endTimeNode.getText().split(":");
-						int startTime = Integer.parseInt(startTimeToken[0]);
-						int endTime = Integer.parseInt(endTimeToken[0]);
-						actNode.setStartEndTime(startTime, endTime);
+					int count = 0;
+					while(periodIter.hasNext()) {
+						if (count == temp) {
+							Element periodElement = (Element) periodIter.next();
+							Node startTimeNode = periodElement.selectSingleNode("startTime");
+							Node endTimeNode = periodElement.selectSingleNode("endTime");
+							String[] startTimeToken = startTimeNode.getText().split(":");
+							String[] endTimeToken = endTimeNode.getText().split(":");
+							int startTime = Integer.parseInt(startTimeToken[0]);
+							int endTime = Integer.parseInt(endTimeToken[0]);
+							actNode.setStartTime(startTime);
+							actNode.setEndTime(endTime);
+						}
+						count++;
 					}
 					// Appliances
 					Iterator applianceIter = applianceList.iterator();

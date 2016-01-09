@@ -6,7 +6,9 @@ import java.util.HashMap;
 public class ActivityNode {
 	String name;
 	private boolean schedulability;
-	HashMap<Integer, Integer> startEndTime;  // <startTime, endTime>
+	//HashMap<Integer, Integer> startEndTime;  // <startTime, endTime>
+	int startTime;
+	int endTime;
 	int duration;
 	ArrayList<String> applianceList;
 	double powerConsumption;
@@ -15,7 +17,6 @@ public class ActivityNode {
 
 	public ActivityNode(){
 		this.applianceList = new ArrayList<String>();
-		this.startEndTime = new HashMap<Integer, Integer>();
 		this.renew = false;
 	}
 	//Hi Its branch
@@ -39,14 +40,30 @@ public class ActivityNode {
 		return this.schedulability;
 	}
 	
-	public void setStartEndTime(int startTime, int endTime){
-		startEndTime.put(startTime, endTime);
-	}
+	//public void setStartEndTime(int startTime, int endTime){
+	//	startEndTime.put(startTime, endTime);
+	//}
 	
-	public HashMap<Integer, Integer> getStartEndTime(){
-		return this.startEndTime;
+	//public HashMap<Integer, Integer> getStartEndTime(){
+	//	return this.startEndTime;
+	//}
+
+	public void setStartTime(int startTime){
+		this.startTime = startTime;
 	}
-	
+
+	public void setEndTime(int endTime){
+		this.endTime = endTime;
+	}
+
+	public int getStartTime(){
+		return this.startTime;
+	}
+
+	public int getEndTime(){
+		return this.endTime;
+	}
+
 	public void setDuration(int duration){
 		this.duration = duration;
 	}
@@ -73,8 +90,8 @@ public class ActivityNode {
 
 	public void changeType(boolean type, int startTime, int endTime){
 		this.schedulability = type;
-		this.startEndTime.clear();
-		this.startEndTime.put(startTime,endTime);
+		this.startTime = startTime;
+		this.endTime = endTime;
 		this.renew = true;
 	}
 
