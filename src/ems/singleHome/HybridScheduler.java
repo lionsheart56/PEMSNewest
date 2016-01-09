@@ -138,39 +138,61 @@ public class HybridScheduler {
 
 		HashMap<Integer, List<String>> tempSchedule = this.getSchedule();
 		HashMap<Integer, ArrayList<ActivityNode>> allSchedule = this.getAllSchedule();
-
+		for(ActivityNode oAct : allAct) {
+			System.out.println(oAct.getName() + " " + oAct.getID() + " " + oAct.getStartEndTime() + " " + oAct.getSchedulability() + " " + oAct.getRenew());
+		}
+		System.out.println("====================");
 		Set<Integer> allTime = tempSchedule.keySet();
 		ArrayList<Integer> allTimeList = new ArrayList<Integer>();
 		allTimeList.addAll(allTime);
 		Collections.sort(allTimeList);
 
 		for(int time: allTimeList){
-			//System.out.println("TT"+time);
+			//System.out.print("Time: "+ time + "  ");
 			ArrayList<ActivityNode> tempAct = allSchedule.get(time);
+
 			if(time < interruptTime){
-				for(ActivityNode oAct : allAct){
-					for(ActivityNode act : tempAct){
-						if(Objects.equals(oAct.getName(), act.getName())){
-							if(oAct.getRenew() == false){
-								int duration = oAct.getDuration();
-								int endTime = time +duration;
-								oAct.changeType(false, time, endTime);
-							}
+
+				for(ActivityNode oAct : allAct){  // All activity thay this user has.
+					//System.out.println(oAct.getName() + ": " + oAct.getID());
+					for(ActivityNode act : tempAct){     // tempAct is the activity that happened in that time
+						if(Objects.equals(oAct.getName(), act.getName()) && !oAct.getRenew()){
+								//System.out.println(oAct.getName() + ": " + oAct.getID());
+								Map timeL = oAct.getStartEndTime();
+								Set timeS = (Set) timeL.entrySet();
+								Iterator timeIT = timeS.iterator();
+								int key = 0,val = 0;
+								while(timeIT.hasNext()){
+									Map.Entry timeEntry = (Map.Entry) timeIT.next();
+									key = (int) timeEntry.getKey();
+									val = (int) timeEntry.getValue();
+								}
+								if(time >= key && time <= val) {
+									int duration = oAct.getDuration();
+									int endTime = time + duration;
+									oAct.changeType(false, time, endTime);
+									//System.out.println(oAct.getName() + ": " + oAct.getID() + " | " + oAct.getRenew());
+								}
 						}
 					}
 				}
 			}else if (time == interruptTime){
-				for(ActivityNode act : allAct){
-					if(Objects.equals(act.getName(), interruptAct)){
-						if(act.getRenew() == false){
-							int duraion = act.getDuration();
-							int endTime = interruptTime +duraion;
-							act.changeType(false, interruptTime, endTime);
+					for (ActivityNode oAct : allAct) {
+						String name = oAct.getName();
+						if (Objects.equals(name, interruptAct) && !oAct.getRenew()) {
+							int duration = oAct.getDuration();
+							int endTime = time + duration;
+							oAct.changeType(false, time, endTime);
 						}
+						break;
 					}
-				}
 			}
 		}
+
+		for(ActivityNode oAct : allAct) {
+				System.out.println(oAct.getName() + " " + oAct.getID() + " " + oAct.getStartEndTime() + " " + oAct.getSchedulability() + " " + oAct.getRenew());
+			}
+			System.out.println("====================");
 
 		for(ActivityNode actNode : allAct){
 			boolean schedulability = actNode.getSchedulability();
