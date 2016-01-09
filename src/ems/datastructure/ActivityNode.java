@@ -11,13 +11,18 @@ public class ActivityNode {
 	ArrayList<String> applianceList;
 	double powerConsumption;
 	boolean renew;
-	
+	int id;
+
 	public ActivityNode(){
 		this.applianceList = new ArrayList<String>();
 		this.startEndTime = new HashMap<Integer, Integer>();
 		this.renew = false;
 	}
-	
+
+	public void setID(int i){ this.id = i;}
+
+	public int getID(){ return this.id; }
+
 	public void setName(String name){
 		this.name = name;
 	}

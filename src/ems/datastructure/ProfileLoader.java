@@ -37,10 +37,12 @@ public class ProfileLoader{
 				// How many times will this activity happen
 				List timesList = actElement.selectNodes("times");
 				Iterator timesIter = timesList.iterator();
+				int temp = 0;
 				while(timesIter.hasNext()){
 					ActivityNode actNode = new ActivityNode();
 					// Set activity name
 					actNode.setName(actName);
+					actNode.setID(temp);
 					Element timesElement = (Element)timesIter.next();
 					
 					// Get node/list of
@@ -80,6 +82,7 @@ public class ProfileLoader{
 						actNode.addAppliance(appName);
 					}
 					scheduleProfile.add(actNode);
+					temp++;
 				}
 			}
 		} catch(DocumentException e){

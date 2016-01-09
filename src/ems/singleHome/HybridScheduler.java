@@ -111,7 +111,7 @@ public class HybridScheduler {
 				//System.out.println("=========================================");
 				
 				epoch++;
-				if(limitCount > 10) break;
+				//if(limitCount > 40) break;
 			} else {
 				done = true;
 				//nowepoch = epoch;
@@ -121,7 +121,7 @@ public class HybridScheduler {
 		long duration = endTime - startTime;
 
 		printSchedule(historyGBestIndex);
-		//printSolution(historyGBestIndex);
+		printSolution(historyGBestIndex);
 		//System.out.println("At epoch: "+ nowepoch);
 		System.out.println("Second:" + duration/1000);
 		System.out.println("Minute:" + duration/60000);
