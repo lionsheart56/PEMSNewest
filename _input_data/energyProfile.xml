@@ -1,0 +1,82 @@
+<energyConsumption>
+	<energy id="TV"> <!-- TECO TL5502TRE -->
+		<operation>160</operation>
+		<standby>2.16</standby>
+	</energy>                    
+	<energy id="XBOX"> <!-- XOBX 360-->
+		<operation>1056</operation>
+		<standby>0</standby>
+	</energy>                 
+	<energy id="Radio"> <!-- Panasonic SC-HC38 -->
+		<operation>40</operation>
+		<standby>2.95</standby>
+	</energy>                  
+	<energy id="WaterColdFan"> <!-- OSAKI VK-29 -->
+		<operation>110</operation>
+		<standby>6.52</standby>
+	</energy>
+	<energy id="Fan"> <!-- TECO XA1670AB -->
+		<operation>52</operation>
+		<standby>0</standby>
+	</energy>                    
+	<energy id="Air-conditioner"> <!-- SAMPO AM-PA41DC -->
+		<operation>1025</operation>
+		<standby>2.41</standby>
+	</energy>
+	<energy id="Light">
+		<operation>240</operation> <!-- 60w * 4 -->
+		<standby>0</standby>
+	</energy>
+	<energy id="Lamp">  <!-- PHILIPS PLEU23207 -->
+		<operation>23</operation>
+		<standby>0</standby>
+	</energy>
+	<energy id="NightLamp">
+		<operation>5</operation>
+		<standby>0</standby>
+	</energy>
+	<energy id="PC">
+		<operation>500</operation>
+		<standby>4.93</standby>	
+	</energy>
+	<energy id="Laptop"> <!-- MacBook Pro 13.3 -->
+		<operation>60</operation>
+		<standby>0</standby>
+	</energy>
+	<energy id="WashingMachine"> <!-- TECO W0838FW -->
+		<operation>430</operation>
+		<standby>0.7</standby>
+	</energy>
+	<energy id="TumbleDryer"> <!-- Panasonic NH70Y-->
+		<operation>1420</operation>
+		<standby>0</standby>
+	</energy>
+	<energy id="DishWasher"> <!-- FRIGIDAIRE -->
+		<operation>680</operation>
+		<standby>1.2</standby>
+	</energy>            
+	<energy id="Oven"> <!-- YB1801CB -->
+		<operation>1200</operation>
+		<standby>0</standby>
+	</energy>
+	<energy id="RiceCooker"> <!-- TECO YC1031CB -->
+		<operation>860</operation>
+		<standby>0.95</standby>
+	</energy>
+	<energy id="Microwave">  <!-- TECO YM3101CB -->
+		<operation>1000</operation>
+		<standby>2.25</standby>
+	</energy>
+	<energy id="CoffeeMaker"> <!-- PHILIPS HD8327 -->
+		<operation>140</operation>
+		<standby>0</standby>
+	</energy>
+	<energy id="RangeHood"> <!-- SAKURA 3680SXL -->
+		<operation>310</operation>
+		<standby>0</standby>
+	</energy>
+	<energy id="VacuumCleaner"> <!-- TECO XJ3001CB -->
+		<operation>1000</operation>
+		<standby>0</standby>
+	</energy>        
+</energyConsumption>

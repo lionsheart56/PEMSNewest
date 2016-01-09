@@ -1,0 +1,106 @@
+<electricityPrice>
+	<TOU>
+		<price id="0">3.65</price>
+		<price id="1">3.65</price>
+		<price id="2">3.65</price>
+		<price id="3">3.65</price>
+		<price id="4">3.65</price>
+		<price id="5">3.65</price>
+		<price id="6">3.65</price>
+		<price id="7">3.65</price>
+		<price id="8">5.40</price>
+		<price id="9">5.40</price>
+		<price id="10">5.40</price>
+		<price id="11">5.40</price>
+		<price id="12">5.40</price>
+		<price id="13">5.40</price>
+		<price id="14">5.40</price>
+		<price id="15">5.40</price>
+		<price id="16">5.40</price>
+		<price id="17">5.40</price>
+		<price id="18">5.40</price>
+		<price id="19">5.40</price>
+		<price id="20">5.40</price>
+		<price id="21">5.40</price>
+		<price id="22">3.65</price>
+		<price id="23">3.65</price>
+	</TOU>
+	<!--<TOUCPP>
+		<price id="0">3.65</price>
+		<price id="1">3.65</price>
+		<price id="2">3.65</price>
+		<price id="3">3.65</price>
+		<price id="4">3.65</price>
+		<price id="5">3.65</price>
+		<price id="6">3.65</price>
+		<price id="7">3.65</price>
+		<price id="8">5.40</price>
+		<price id="9">5.40</price>
+		<price id="10">5.40</price>
+		<price id="11">5.40</price>
+		<price id="12">5.40</price>
+		<price id="13">8.52</price>
+		<price id="14">8.52</price>
+		<price id="15">8.52</price>
+		<price id="16">8.52</price>
+		<price id="17">5.40</price>
+		<price id="18">5.40</price>
+		<price id="19">5.40</price>
+		<price id="20">5.40</price>
+		<price id="21">5.40</price>
+		<price id="22">3.65</price>
+		<price id="23">3.65</price>
+	</TOUCPP> -->
+	<TOUCPP>
+		<price id="0">2.06</price>
+		<price id="1">2.06</price>
+		<price id="2">2.06</price>
+		<price id="3">2.06</price>
+		<price id="4">2.06</price>
+		<price id="5">2.06</price>
+		<price id="6">2.06</price>
+		<price id="7">3.98</price>
+		<price id="8">3.98</price>
+		<price id="9">3.98</price>
+		<price id="10">3.98</price>
+		<price id="11">3.98</price>
+		<price id="12">3.98</price>
+		<price id="13">3.98</price>
+		<price id="14">3.98</price>
+		<price id="15">3.98</price>
+		<price id="16">3.98</price>
+		<price id="17">3.98</price>
+		<price id="18">3.98</price>
+		<price id="19">3.98</price>
+		<price id="20">3.98</price>
+		<price id="21">3.98</price>
+		<price id="22">2.06</price>
+		<price id="23">2.06</price>
+	</TOUCPP>
+	<Dynamic>
+		<price id="0">3.0</price>
+		<price id="1">3.2</price>
+		<price id="2">3.4</price>
+		<price id="3">3.2</price>
+		<price id="4">3.3</price>
+		<price id="5">3.6</price>
+		<price id="6">3.75</price>
+		<price id="7">3.89</price>
+		<price id="8">4.60</price>
+		<price id="9">5.40</price>
+		<price id="10">5.80</price>
+		<price id="11">5.90</price>
+		<price id="12">7.40</price>
+		<price id="13">6.52</price>
+		<price id="14">4.52</price>
+		<price id="15">3.52</price>
+		<price id="16">4.52</price>
+		<price id="17">6.40</price>
+		<price id="18">7.30</price>
+		<price id="19">7.05</price>
+		<price id="20">6.40</price>
+		<price id="21">4.20</price>
+		<price id="22">3.65</price>
+		<price id="23">3.0</price>
+	</Dynamic>
+</electricityPrice>
