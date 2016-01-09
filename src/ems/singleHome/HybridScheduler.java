@@ -111,7 +111,7 @@ public class HybridScheduler {
 				//System.out.println("=========================================");
 				
 				epoch++;
-				//if(limitCount > 40) break;
+				if(limitCount > 20) break;
 			} else {
 				done = true;
 				//nowepoch = epoch;
@@ -150,35 +150,7 @@ public class HybridScheduler {
 		for(int time: allTimeList){
 			//System.out.print("Time: "+ time + "  ");
 			ArrayList<ActivityNode> tempAct = allSchedule.get(time);
-
-			if(time < interruptTime){
-
-				for(ActivityNode oAct : allAct){  // All activity thay this user has.
-					//System.out.println(oAct.getName() + ": " + oAct.getID());
-					for(ActivityNode act : tempAct){     // tempAct is the activity that happened in that time
-						if(Objects.equals(oAct.getName(), act.getName()) && !oAct.getRenew()){
-								//System.out.println(oAct.getName() + ": " + oAct.getID());
-								int key = oAct.getStartTime(),val = oAct.getEndTime();
-								if(time >= key && time <= val) {
-									int duration = oAct.getDuration();
-									int endTime = time + duration;
-									oAct.changeType(false, time, endTime);
-									//System.out.println(oAct.getName() + ": " + oAct.getID() + " | " + oAct.getRenew());
-								}
-						}
-					}
-				}
-			}else if (time == interruptTime){
-					for (ActivityNode oAct : allAct) {
-						String name = oAct.getName();
-						if (Objects.equals(name, interruptAct) && !oAct.getRenew()) {
-							int duration = oAct.getDuration();
-							int endTime = time + duration;
-							oAct.changeType(false, time, endTime);
-						}
-						break;
-					}
-			}
+			
 		}
 
 		for(ActivityNode oAct : allAct) {
