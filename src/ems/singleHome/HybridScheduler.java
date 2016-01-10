@@ -146,7 +146,57 @@ public class HybridScheduler {
 		ArrayList<Integer> allTimeList = new ArrayList<Integer>();
 		allTimeList.addAll(allTime);
 		Collections.sort(allTimeList);
+		int step = 0;
+		for(int i=0;i<24;i++){
+			if(allTimeList.contains(i)){
+				//System.out.println(i);
+				int time = allTimeList.get(step);
+				step++;
+				ArrayList<ActivityNode> tempAct = allSchedule.get(time);   // In this time, original schedule activity.
 
+				if(time < interruptTime){
+					for(ActivityNode actNode : tempAct) {
+						for (ActivityNode oAct : allAct) {
+							if(Objects.equals(oAct.getName(),actNode.getName()) && !oAct.getRenew()){
+								int key = oAct.getStartTime(), val = oAct.getEndTime();
+								if(time >= key && time <=val) {
+									int endTime = oAct.getDuration() + time;
+									oAct.changeType(false, time, endTime);
+								}else
+									break;
+							}
+						}
+					}
+				}else if(time == interruptTime){
+					for(ActivityNode oAct : allAct){
+						if (Objects.equals(oAct.getName(), interruptAct) && !oAct.getRenew()) {
+							int endTime = i + oAct.getDuration();
+							oAct.changeType(false,i,endTime);
+							break;
+						}
+					}
+				}
+			}else{
+				if(i == interruptTime){
+					for(ActivityNode oAct : allAct){
+						if (Objects.equals(oAct.getName(), interruptAct) && !oAct.getRenew()) {
+							int endTime = i + oAct.getDuration();
+							oAct.changeType(false,i,endTime);
+							break;
+						}
+					}
+				}
+			}
+		}
+		for(ActivityNode act : allAct){
+			if(act.getSchedulability()){
+				int startTime = act.getStartTime();
+				if(startTime < interruptTime){
+					act.changeType(act.getSchedulability(), interruptTime, act.getEndTime());
+				}
+			}
+		}
+		/*
 		for(int time: allTimeList){
 			//System.out.print("Time: "+ time + "  ");
 			ArrayList<ActivityNode> tempAct = allSchedule.get(time);
@@ -190,7 +240,7 @@ public class HybridScheduler {
 				}
 			}
 		}
-
+	*/
 		for(ActivityNode oAct : allAct) {
 				System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
 			}
@@ -514,6 +564,7 @@ public class HybridScheduler {
 	}
 
 	/* Move particle and check feasibility and update pBest if necessary */
+	/* Prolbem Here */
 	private void updateParticle() {
 		int numOfSchedulableAct = schedulableActivity.size();
 		for (int i = 0; i < MAX_PARTICLES; i++) {
