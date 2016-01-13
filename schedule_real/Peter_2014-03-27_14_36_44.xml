@@ -233,20 +233,4 @@
       </applianceList>
     </times>
   </activity>
-  <activity id="MakingCoffee">
-    <times id="1">
-      <periodList>
-        <period id="1">
-          <startTime>08:00</startTime>
-          <endTime>08:30</endTime>
-        </period>
-      </periodList>
-      <duration>30</duration>
-      <schedulable>false</schedulable>
-      <applianceList>
-        <appliance id="1">TV</appliance>
-        <appliance id="2">CoffeeMaker</appliance>
-      </applianceList>
-    </times>
-  </activity>
 </schedule>
