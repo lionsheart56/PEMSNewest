@@ -585,12 +585,13 @@ public class HybridScheduler {
 				int preferEnd = actNode.getEndTime();
 				int preferDuration = actNode.getDuration();
 				int deadline = preferEnd - preferDuration;
+				if(deadline < preferStart) System.out.println("Fuck you");
 				if(newStartTime > deadline){
 					currentParticle.setScheduleData(j, deadline);
-				}
-				if(newStartTime < preferStart){
+				}else if(newStartTime < preferStart){
 					currentParticle.setScheduleData(j, preferStart);
-				}
+				}else
+					currentParticle.setScheduleData(j, newStartTime);
 			}
 
 			// Update time
