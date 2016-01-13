@@ -50,13 +50,7 @@ public class HybridScheduler {
 		this.allAct = env.activitySchedule;
 		
 		// New instances of all objects 
-		particleList = new ArrayList<HybridParticle>(MAX_PARTICLES);
-		allSchedule = new HashMap<Integer, ArrayList<ActivityNode>>();
-		scheduleList = new HashMap<Integer, List<String>>();
-		batteryPower = new ArrayList<Double>(TIME_SLOTS);
-		for (int i = 0; i < TIME_SLOTS; i++) {
-			batteryPower.add(0.0);
-		}
+
 	}
 	
 	/* Main PSO algorithm 
@@ -67,6 +61,15 @@ public class HybridScheduler {
 	 * 5. Check epoch
 	 */
 	public void PSOAlgorithm() {
+
+		particleList = new ArrayList<HybridParticle>(MAX_PARTICLES);
+		allSchedule = new HashMap<Integer, ArrayList<ActivityNode>>();
+		scheduleList = new HashMap<Integer, List<String>>();
+		batteryPower = new ArrayList<Double>(TIME_SLOTS);
+		for (int i = 0; i < TIME_SLOTS; i++) {
+			batteryPower.add(0.0);
+		}
+
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		int historyGBestIndex = 0;
 		int currentGBestIndex = 0;
