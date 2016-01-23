@@ -141,10 +141,10 @@ public class HybridScheduler {
 
 		HashMap<Integer, List<String>> tempSchedule = this.getSchedule();
 		HashMap<Integer, ArrayList<ActivityNode>> allSchedule = this.getAllSchedule();
-		for(ActivityNode oAct : allAct) {
-			System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
-		}
-		System.out.println("====================");
+		//for(ActivityNode oAct : allAct) {
+		//	System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
+		//}
+		//System.out.println("====================");
 		Set<Integer> allTime = tempSchedule.keySet();
 		ArrayList<Integer> allTimeList = new ArrayList<Integer>();
 		allTimeList.addAll(allTime);
@@ -244,10 +244,10 @@ public class HybridScheduler {
 			}
 		}
 	*/
-		for(ActivityNode oAct : allAct) {
-				System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
-			}
-			System.out.println("====================");
+		//for(ActivityNode oAct : allAct) {
+		//		System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
+		//	}
+		//	System.out.println("====================");
 
 		for(ActivityNode actNode : allAct){
 			boolean schedulability = actNode.getSchedulability();

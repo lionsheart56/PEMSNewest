@@ -19,14 +19,6 @@ public class Scheduler {
 		System.out.print("Which activity you do instead: ");
 		String interruptAct = scanner.next();
 		hs.setRenew(interruptTime, interruptAct);
-	
-
-
-
 		hs.PSOAlgorithm();
-
-
-
-
 	}
 }
