@@ -199,51 +199,6 @@ public class SingleScheduler {
                 }
             }
         }
-		/*
-		for(int time: allTimeList){
-			//System.out.print("Time: "+ time + "  ");
-			ArrayList<ActivityNode> tempAct = allSchedule.get(time);
-
-			if(time <= interruptTime){
-				if(time < interruptTime) {
-					for (ActivityNode oAct : allAct) {  // All activity thay this user has.
-						//System.out.println(oAct.getName() + ": " + oAct.getID());
-						for (ActivityNode act : tempAct) {     // tempAct is the activity that happened in that time
-							if (Objects.equals(oAct.getName(), act.getName()) && !oAct.getRenew()) {
-								//System.out.println(oAct.getName() + ": " + oAct.getID());
-								int key = oAct.getStartTime(), val = oAct.getEndTime();
-								if (time >= key && time <= val) {
-									//int duration = oAct.getDuration();
-									int endTime = time + 1;// duration;
-									oAct.changeType(false, time, endTime);
-									System.out.println(oAct.getName() + ": " + oAct.getID() + " | " + oAct.getRenew());
-								}
-							}
-						}
-					}
-				}
-				if(time == interruptTime){
-					for (ActivityNode oAct : allAct) {
-						System.out.println(oAct.getName());
-						String name = oAct.getName();
-						if (Objects.equals(name, interruptAct) && !oAct.getRenew()) {
-							int duration = oAct.getDuration();
-							int endTime = time + duration;
-							oAct.changeType(false, time, endTime);
-							System.out.println(oAct.getName() + ": " + oAct.getID() + " || " +  oAct.getRenew());
-							break;
-						}
-
-					}
-				}
-			}else{
-				for(ActivityNode act : tempAct){
-					int endTime = act.getEndTime();
-					act.changeType(true, time, endTime);
-				}
-			}
-		}
-	*/
         //for(ActivityNode oAct : allAct) {
         //		System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
         //	}
@@ -277,26 +232,6 @@ public class SingleScheduler {
                 int n = period - startTime;
                 double m = Math.random()*n;
                 int initStartTime = (int)m+startTime;
-				/*
-				HashMap<Integer, Integer> startEndTime = actNode.getStartEndTime();
-
-				// Get random permuted time list
-				Set<Integer> startTimeSet = startEndTime.keySet(); //Get all of the key in the startEndTime
-				ArrayList<Integer> startTimeList = new ArrayList<Integer>(startTimeSet);
-				Collections.shuffle(startTimeList);
-
-				// Get initial start time from available start time
-				// 1. Get a start time from random permuted list
-				// 2. Get corresponding end time
-				// 3. Calculate valid period of start time
-				// 4. Random start time
-				int numOfStartTime = startTimeList.size();
-				int randomIndex = new Random().nextInt(numOfStartTime);
-				int startTime = startTimeList.get(randomIndex);
-				int endTime = startEndTime.get(startTime);
-				int validPeriod = endTime - duration - startTime;
-				int initStartTime = startTime + new Random().nextInt(validPeriod + 1);
-				*/
 
                 // Set start time of corresponding activity
                 newParticle.setScheduleData(j, initStartTime);
