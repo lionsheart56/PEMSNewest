@@ -6,29 +6,30 @@ package ems.MultipleHome;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
-import java.lang.Math;
 
-import ems.datastructure.ActivityNode;
-import ems.datastructure.Environment;
 import ems.singleHome.HybridScheduler;
 
 
 public class MultipleScheduler {
-    public static ArrayList<Environment> allHome = new ArrayList<Environment>();
+    public ArrayList<SingleScheduler> allHome = new ArrayList<SingleScheduler>();
     private int numOfHome = 0;
 
     public MultipleScheduler(String[] args){
+
         this.numOfHome = args.length;
+
+        for(int i = 0; i < this.numOfHome ; i++){
+            SingleScheduler temp = new SingleScheduler(args[i]);
+            allHome.add(temp);
+        }
     }
-
-
 
     // The entrance of all program.
     public void run(){
+
+        // 1. Do single Optimization
+
+
 
     }
 

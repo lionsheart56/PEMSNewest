@@ -20,8 +20,8 @@ public class MultiScheduler {
 
     public static void main(String[] args){
 
-        //MultipleScheduler instance = new MultipleScheduler(args);
-        System.out.println(args.length);
-        //instance.run();
+        MultipleScheduler instance = new MultipleScheduler(args);
+        //System.out.println(args.length);
+        instance.run();
     }
 }
