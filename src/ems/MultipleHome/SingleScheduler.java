@@ -212,6 +212,15 @@ public class SingleScheduler {
 
     }
 
+
+    public ArrayList<Double> getPowerUsage(){
+        ArrayList<Double> result = new ArrayList<Double>();
+
+
+        return result;
+    }
+
+
     /* Generate initial particles */
     private void initialize() {
 
