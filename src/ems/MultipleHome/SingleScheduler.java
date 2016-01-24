@@ -6,6 +6,9 @@ import ems.datastructure.ActivityNode;
 import ems.datastructure.Environment;
 import ems.datastructure.HybridParticle;
 
+// How to use others profile to calculate PAR and Fitness 2016/01/24
+
+
 public class SingleScheduler {
     private final int MAX_PARTICLES = 1000;
     private final int TIME_SLOTS = MultiScheduler.TIME_SLOTS;
