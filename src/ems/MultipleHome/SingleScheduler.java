@@ -14,6 +14,8 @@ public class SingleScheduler {
     private final int BATTERY_VOL = 12;
     private final double MAX_BATTERY_CAPACITY = (double)(NUM_BATTERY * BATTERY_AH * BATTERY_VOL) / 1000;
 
+    private int gBest = 0;
+
     /* Information from _input_data */
     private ArrayList<ActivityNode> schedulableActivity = new ArrayList<ActivityNode>();
     private ArrayList<ActivityNode> nonSchedulableActivity = new ArrayList<ActivityNode>();
@@ -32,6 +34,8 @@ public class SingleScheduler {
     private ArrayList<Double> batteryPower;
 
     private HashMap<Integer, List<String>> scheduleList;
+
+    private ArrayList<Double> other;
 
     /* Get
      * 1. Schedulable activity list
@@ -76,7 +80,6 @@ public class SingleScheduler {
         int epoch = 0;
         boolean done = false;
         int limitCount = 0;
-        int nowepoch = 0;
 
         initialize();
         while (!done) {
@@ -85,7 +88,6 @@ public class SingleScheduler {
             if (epoch < MAX_EPOCHS) {
                 // Get index of gBest particle for current epoch
                 currentGBestIndex = getBestParticle();
-                //System.out.println("Epoch:"+epoch);
                 // Update gBest for current epoch
                 HybridParticle currentGBest = particleList.get(currentGBestIndex);
                 HybridParticle historyGBest = particleList.get(historyGBestIndex);
@@ -100,24 +102,15 @@ public class SingleScheduler {
                     historyGBestIndex = currentGBestIndex;
                 }
 
-
                 // Update velocity for each particle
                 setVelocity(historyGBestIndex);
 
                 // Update particle according to its velocity
                 updateParticle();
-
-                // Debug print out
-                //System.out.println("Schedule epoch number: " + epoch);
-                //printBestResult(historyGBestIndex);
-                //printSolutoin(historyGBestIndex);
-                //System.out.println("=========================================");
-
                 epoch++;
                 if(limitCount > 20) break;
             } else {
                 done = true;
-                //nowepoch = epoch;
             }
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
@@ -125,19 +118,78 @@ public class SingleScheduler {
 
         printSchedule(historyGBestIndex);
         printSolution(historyGBestIndex);
-        ArrayList<Double> result = this.getPowerUsage(historyGBestIndex);
-        //System.out.println("At epoch: "+ nowepoch);
+        gBest = historyGBestIndex;
+
+        System.out.println("Second:" + duration/1000);
+        System.out.println("Minute:" + duration/60000);
+    }
+
+    public void PSOAlgorithm(ArrayList<Double> other) {
+
+        particleList = new ArrayList<HybridParticle>(MAX_PARTICLES);
+        allSchedule = new HashMap<Integer, ArrayList<ActivityNode>>();
+        scheduleList = new HashMap<Integer, List<String>>();
+        batteryPower = new ArrayList<Double>(TIME_SLOTS);
+        for (int i = 0; i < TIME_SLOTS; i++) {
+            batteryPower.add(0.0);
+        }
+
+        long startTime = Calendar.getInstance().getTimeInMillis();
+        int historyGBestIndex = 0;
+        int currentGBestIndex = 0;
+        int epoch = 0;
+        boolean done = false;
+        int limitCount = 0;
+
+        initialize();
+        while (!done) {
+            int MAX_EPOCHS;
+            MAX_EPOCHS = 1000;
+            if (epoch < MAX_EPOCHS) {
+                // Get index of gBest particle for current epoch
+                currentGBestIndex = getBestParticle();
+                // Update gBest for current epoch
+                HybridParticle currentGBest = particleList.get(currentGBestIndex);
+                HybridParticle historyGBest = particleList.get(historyGBestIndex);
+                double currentGBestFitness = currentGBest.getPBestValue();
+                double historyGBestFitness = historyGBest.getPBestValue();
+                if(currentGBestFitness - historyGBestFitness < 1){
+                    limitCount +=1;
+                }else if(historyGBestFitness - currentGBestFitness < 1){
+                    limitCount +=1;
+                }
+                if (currentGBestFitness < historyGBestFitness) {
+                    historyGBestIndex = currentGBestIndex;
+                }
+
+                // Update velocity for each particle
+                setVelocity(historyGBestIndex);
+
+                // Update particle according to its velocity
+                updateParticle();
+                epoch++;
+                if(limitCount > 20) break;
+            } else {
+                done = true;
+            }
+        }
+        long endTime = Calendar.getInstance().getTimeInMillis();
+        long duration = endTime - startTime;
+
+        printSchedule(historyGBestIndex);
+        printSolution(historyGBestIndex);
+        gBest = historyGBestIndex;
+
         System.out.println("Second:" + duration/1000);
         System.out.println("Minute:" + duration/60000);
 
-        System.out.println("======================");
-        System.out.println(result);
     }
+
 
     public HashMap<Integer, ArrayList<ActivityNode>> getAllSchedule(){
         return this.allSchedule;
     }
-    //Problem here
+
     public void setRenew(int interruptTime, String interruptAct){
 
         this.schedulableActivity.removeAll(this.schedulableActivity);
@@ -217,8 +269,8 @@ public class SingleScheduler {
     }
 
 
-    public ArrayList<Double> getPowerUsage(int historyGBestIndex){
-        HybridParticle temp = particleList.get(historyGBestIndex);
+    public ArrayList<Double> getPowerUsage(){
+        HybridParticle temp = particleList.get(gBest);
         ArrayList<Double> result = temp.getPower();
         return result;
     }
