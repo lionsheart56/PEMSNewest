@@ -541,89 +541,6 @@ public class SingleScheduler {
                     currentParticle.setScheduleData(j, newStartTime);
             }
 
-            // Update time
-			/*
-			for (int j = 0; j < numOfSchedulableAct; j++) {
-				boolean settingFlag = false;
-
-				// Set new start time
-				int oldStartTime = currentParticle.getScheduleData(j);
-				double volecity = currentParticle.getScheduleVel(j);
-				int newStartTime = (int)(oldStartTime + Math.round(volecity));
-
-
-				// Get real sorted start time list
-				ActivityNode actNode = schedulableActivity.get(j);
-				HashMap<Integer, Integer> startEndTime = actNode.getStartEndTime();
-				Set<Integer> startTimeSet = startEndTime.keySet();
-				ArrayList<Integer> startTimeList = new ArrayList<Integer>(startTimeSet);
-				Collections.sort(startTimeList);
-
-				// Store newStartTime if it is in valid period
-				for (int startTime : startTimeList) {
-					int endTime = startEndTime.get(startTime);
-					int duration = actNode.getDuration();
-					if (newStartTime >= startTime && newStartTime <= (endTime - duration)) {
-						currentParticle.setScheduleData(j, newStartTime);
-						settingFlag = true;
-						break;
-					}
-				}
-
-
-
-				// If newStartTime isn't in the valid interval
-				// 1. Find position of newStartTime, between two interval or not
-				// 2. Set newStartTime to the closest and valid time slot
-				if (!settingFlag) {
-					int smallestBiggerStartTime = -1;
-					int largestSmallerStartTime = -1;
-
-					// Find position of new start time
-					for (int k = 0; k < startTimeList.size(); k++) {
-						// newStartTime isn't between two interval
-						if(startTimeList.get(k) > newStartTime && k == 0){
-							smallestBiggerStartTime = startTimeList.get(k);
-							break;
-						}
-						if(startTimeList.get(k) < newStartTime && k == startTimeList.size() - 1){
-							largestSmallerStartTime = startTimeList.get(k);
-							break;
-						}
-						// newStartTime is between two interval
-						if (startTimeList.get(k) < newStartTime) {
-							continue;
-						} else {
-							smallestBiggerStartTime = startTimeList.get(k);
-							largestSmallerStartTime = startTimeList.get(k - 1);
-							break;
-						}
-					}
-
-					// Set newStartTime to the closest and valid time slot
-					if (smallestBiggerStartTime != -1 && largestSmallerStartTime != -1) {
-						int duration = actNode.getDuration();
-						int largestSmallerEndTime = startEndTime.get(largestSmallerStartTime);
-						int largestSmallerValidStartTime = largestSmallerEndTime - duration;
-						int distance_1 = Math.abs(largestSmallerValidStartTime - newStartTime);
-						int distance_2 = Math.abs(smallestBiggerStartTime - newStartTime);
-						if (distance_1 < distance_2) {
-							currentParticle.setScheduleData(j, largestSmallerValidStartTime);
-						} else {
-							currentParticle.setScheduleData(j, smallestBiggerStartTime);
-						}
-					} else if (smallestBiggerStartTime != -1) {
-						currentParticle.setScheduleData(j, smallestBiggerStartTime);
-					} else if(largestSmallerStartTime != -1) {
-						int largestSmallerEndTime = startEndTime.get(largestSmallerStartTime);
-						int duration = actNode.getDuration();
-						int largestSmallerValidStartTime = largestSmallerEndTime - duration;
-						currentParticle.setScheduleData(j, largestSmallerValidStartTime);
-					}
-				}
-			}
-			*/
-
             // Reset battery power
             for (int j = 0; j < TIME_SLOTS; j++) {
                 batteryPower.set(j, 0.0);
@@ -912,9 +829,6 @@ public class SingleScheduler {
         for (int i = 0; i < numOfNonSchedulableAct; i++) {
             // For each actNode, we get start time/duration
             ActivityNode actNode = nonSchedulableActivity.get(i);
-            //HashMap<Integer, Integer> startEndTime = actNode.getStartEndTime();
-            //Set<Integer> startTimeSet = startEndTime.keySet();
-            //ArrayList<Integer> startTimeList = new ArrayList<Integer>(startTimeSet);
             int startTime = actNode.getStartTime();
             int duration = actNode.getDuration();
 
