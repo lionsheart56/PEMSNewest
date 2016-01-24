@@ -11,6 +11,7 @@ public class HybridParticle {
 	private ArrayList<Double> pBestBatteryData;
 	private ArrayList<Double> scheduleVel;
 	private ArrayList<Double> batteryVel;
+	private ArrayList<Double> powerFromUtility;
 	private double pBestValue = 0.0;
 	
 	// Initialization
@@ -21,6 +22,7 @@ public class HybridParticle {
 		this.pBestBatteryData = new ArrayList<Double>(Scheduler.TIME_SLOTS);
 		this.scheduleVel = new ArrayList<Double>(numOfSchedulableAct);
 		this.batteryVel = new ArrayList<Double>(Scheduler.TIME_SLOTS);
+		this.powerFromUtility = new ArrayList<Double>(Scheduler.TIME_SLOTS);
 		for(int i = 0; i < numOfSchedulableAct; i++){
 			this.scheduleData.add(0);
 			this.pBestScheduleData.add(0);
@@ -30,9 +32,18 @@ public class HybridParticle {
 			this.batteryData.add(0.0);
 			this.pBestBatteryData.add(0.0);
 			this.batteryVel.add(0.0);
+			this.powerFromUtility.add(0.0);
 		}
 	}
-	
+
+	public void addPowerFromUtility(int key, double consumption){
+		this.powerFromUtility.set(key, consumption);
+	}
+
+	public ArrayList<Double> getPower(){
+		return this.powerFromUtility;
+	}
+
 	public ArrayList<Integer> getScheduleData(){
 		return this.scheduleData;
 	}

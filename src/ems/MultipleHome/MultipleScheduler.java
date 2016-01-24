@@ -28,7 +28,11 @@ public class MultipleScheduler {
     public void run(){
 
         // 1. Do single Optimization
+        for(int i=0;i<numOfHome;i++){
+            SingleScheduler temp = allHome.get(i);
+            temp.PSOAlgorithm();
 
+        }
 
 
     }

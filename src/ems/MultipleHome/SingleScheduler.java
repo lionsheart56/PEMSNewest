@@ -125,9 +125,13 @@ public class SingleScheduler {
 
         printSchedule(historyGBestIndex);
         printSolution(historyGBestIndex);
+        ArrayList<Double> result = this.getPowerUsage(historyGBestIndex);
         //System.out.println("At epoch: "+ nowepoch);
         System.out.println("Second:" + duration/1000);
         System.out.println("Minute:" + duration/60000);
+
+        System.out.println("======================");
+        System.out.println(result);
     }
 
     public HashMap<Integer, ArrayList<ActivityNode>> getAllSchedule(){
@@ -213,13 +217,11 @@ public class SingleScheduler {
     }
 
 
-    public ArrayList<Double> getPowerUsage(){
-        ArrayList<Double> result = new ArrayList<Double>();
-
-
+    public ArrayList<Double> getPowerUsage(int historyGBestIndex){
+        HybridParticle temp = particleList.get(historyGBestIndex);
+        ArrayList<Double> result = temp.getPower();
         return result;
     }
-
 
     /* Generate initial particles */
     private void initialize() {
@@ -435,6 +437,7 @@ public class SingleScheduler {
             if (neededGridPower < 0) {
                 neededGridPower = 0;
             }
+            particle.addPowerFromUtility(i,neededGridPower + charge);
             electricityCost += (neededGridPower + charge) * currentElectricityPrice;
         }
         return electricityCost;
@@ -746,21 +749,21 @@ public class SingleScheduler {
         System.out.println("Algorithm	Time	Power Consumption	Power From Utility Company	Discharge	Charge	Solar Power	Battery State	Electricity Cost");
         for (int i = 0; i < TIME_SLOTS; i++) {
             System.out.print("Our Method");
-            System.out.print("	");
+            System.out.print("\t");
             System.out.print(i);
-            System.out.print("	");
+            System.out.print("\t");
             System.out.print((double)Math.round(totalPowerConsumption.get(i) * 1000) / 1000);
-            System.out.print("	");
+            System.out.print("\t");
             System.out.print((double)Math.round(powerFromUtility.get(i) * 1000) / 1000);
-            System.out.print("	");
+            System.out.print("\t");
             System.out.print((double)Math.round(discharge.get(i) * 1000) / 1000);
-            System.out.print("	");
+            System.out.print("\t");
             System.out.print((double)Math.round(charge.get(i) * 1000) / 1000);
-            System.out.print("	");
+            System.out.print("\t");
             System.out.print((double)Math.round(solarPowerProfile.get(i) * 1000) / 1000);
-            System.out.print("	");
+            System.out.print("\t");
             System.out.print((double)Math.round(batteryPower.get(i) * 1000) / 1000);
-            System.out.print("	");
+            System.out.print("\t");
             System.out.println((double)Math.round(totalElectricityCost.get(i) * 1000) / 1000);
         }
 
