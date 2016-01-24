@@ -128,6 +128,7 @@ public class HybridScheduler {
 		//System.out.println("At epoch: "+ nowepoch);
 		System.out.println("Second:" + duration/1000);
 		System.out.println("Minute:" + duration/60000);
+		//System.out.println(this.getAllSchedule());
 	}
 	
 	public HashMap<Integer, ArrayList<ActivityNode>> getAllSchedule(){
@@ -199,51 +200,6 @@ public class HybridScheduler {
 				}
 			}
 		}
-		/*
-		for(int time: allTimeList){
-			//System.out.print("Time: "+ time + "  ");
-			ArrayList<ActivityNode> tempAct = allSchedule.get(time);
-
-			if(time <= interruptTime){
-				if(time < interruptTime) {
-					for (ActivityNode oAct : allAct) {  // All activity thay this user has.
-						//System.out.println(oAct.getName() + ": " + oAct.getID());
-						for (ActivityNode act : tempAct) {     // tempAct is the activity that happened in that time
-							if (Objects.equals(oAct.getName(), act.getName()) && !oAct.getRenew()) {
-								//System.out.println(oAct.getName() + ": " + oAct.getID());
-								int key = oAct.getStartTime(), val = oAct.getEndTime();
-								if (time >= key && time <= val) {
-									//int duration = oAct.getDuration();
-									int endTime = time + 1;// duration;
-									oAct.changeType(false, time, endTime);
-									System.out.println(oAct.getName() + ": " + oAct.getID() + " | " + oAct.getRenew());
-								}
-							}
-						}
-					}
-				}
-				if(time == interruptTime){
-					for (ActivityNode oAct : allAct) {
-						System.out.println(oAct.getName());
-						String name = oAct.getName();
-						if (Objects.equals(name, interruptAct) && !oAct.getRenew()) {
-							int duration = oAct.getDuration();
-							int endTime = time + duration;
-							oAct.changeType(false, time, endTime);
-							System.out.println(oAct.getName() + ": " + oAct.getID() + " || " +  oAct.getRenew());
-							break;
-						}
-
-					}
-				}
-			}else{
-				for(ActivityNode act : tempAct){
-					int endTime = act.getEndTime();
-					act.changeType(true, time, endTime);
-				}
-			}
-		}
-	*/
 		//for(ActivityNode oAct : allAct) {
 		//		System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
 		//	}
@@ -277,26 +233,6 @@ public class HybridScheduler {
 				int n = period - startTime;
 				double m = Math.random()*n;
 				int initStartTime = (int)m+startTime;
-				/*
-				HashMap<Integer, Integer> startEndTime = actNode.getStartEndTime();
-				
-				// Get random permuted time list
-				Set<Integer> startTimeSet = startEndTime.keySet(); //Get all of the key in the startEndTime
-				ArrayList<Integer> startTimeList = new ArrayList<Integer>(startTimeSet);
-				Collections.shuffle(startTimeList);
-				
-				// Get initial start time from available start time
-				// 1. Get a start time from random permuted list
-				// 2. Get corresponding end time
-				// 3. Calculate valid period of start time
-				// 4. Random start time
-				int numOfStartTime = startTimeList.size();
-				int randomIndex = new Random().nextInt(numOfStartTime);
-				int startTime = startTimeList.get(randomIndex);
-				int endTime = startEndTime.get(startTime);
-				int validPeriod = endTime - duration - startTime;
-				int initStartTime = startTime + new Random().nextInt(validPeriod + 1);
-				*/
 
 				// Set start time of corresponding activity
 				newParticle.setScheduleData(j, initStartTime);
@@ -597,89 +533,6 @@ public class HybridScheduler {
 					currentParticle.setScheduleData(j, newStartTime);
 			}
 
-			// Update time
-			/*
-			for (int j = 0; j < numOfSchedulableAct; j++) {
-				boolean settingFlag = false;
-				
-				// Set new start time
-				int oldStartTime = currentParticle.getScheduleData(j);
-				double volecity = currentParticle.getScheduleVel(j);
-				int newStartTime = (int)(oldStartTime + Math.round(volecity));
-
-
-				// Get real sorted start time list
-				ActivityNode actNode = schedulableActivity.get(j);
-				HashMap<Integer, Integer> startEndTime = actNode.getStartEndTime();
-				Set<Integer> startTimeSet = startEndTime.keySet();
-				ArrayList<Integer> startTimeList = new ArrayList<Integer>(startTimeSet);
-				Collections.sort(startTimeList);
-				
-				// Store newStartTime if it is in valid period
-				for (int startTime : startTimeList) {
-					int endTime = startEndTime.get(startTime);
-					int duration = actNode.getDuration();
-					if (newStartTime >= startTime && newStartTime <= (endTime - duration)) {
-						currentParticle.setScheduleData(j, newStartTime);
-						settingFlag = true;
-						break;
-					}
-				}
-
-
-
-				// If newStartTime isn't in the valid interval
-				// 1. Find position of newStartTime, between two interval or not
-				// 2. Set newStartTime to the closest and valid time slot 
-				if (!settingFlag) {
-					int smallestBiggerStartTime = -1;
-					int largestSmallerStartTime = -1;
-					
-					// Find position of new start time
-					for (int k = 0; k < startTimeList.size(); k++) {
-						// newStartTime isn't between two interval
-						if(startTimeList.get(k) > newStartTime && k == 0){
-							smallestBiggerStartTime = startTimeList.get(k);
-							break;
-						}
-						if(startTimeList.get(k) < newStartTime && k == startTimeList.size() - 1){
-							largestSmallerStartTime = startTimeList.get(k);
-							break;
-						}
-						// newStartTime is between two interval
-						if (startTimeList.get(k) < newStartTime) {
-							continue;
-						} else {
-							smallestBiggerStartTime = startTimeList.get(k);
-							largestSmallerStartTime = startTimeList.get(k - 1);
-							break;
-						}
-					}
-					
-					// Set newStartTime to the closest and valid time slot 
-					if (smallestBiggerStartTime != -1 && largestSmallerStartTime != -1) {
-						int duration = actNode.getDuration();
-						int largestSmallerEndTime = startEndTime.get(largestSmallerStartTime);
-						int largestSmallerValidStartTime = largestSmallerEndTime - duration;
-						int distance_1 = Math.abs(largestSmallerValidStartTime - newStartTime);
-						int distance_2 = Math.abs(smallestBiggerStartTime - newStartTime);
-						if (distance_1 < distance_2) {
-							currentParticle.setScheduleData(j, largestSmallerValidStartTime);
-						} else {
-							currentParticle.setScheduleData(j, smallestBiggerStartTime);
-						}
-					} else if (smallestBiggerStartTime != -1) {
-						currentParticle.setScheduleData(j, smallestBiggerStartTime);
-					} else if(largestSmallerStartTime != -1) {
-						int largestSmallerEndTime = startEndTime.get(largestSmallerStartTime);
-						int duration = actNode.getDuration();
-						int largestSmallerValidStartTime = largestSmallerEndTime - duration;
-						currentParticle.setScheduleData(j, largestSmallerValidStartTime);
-					}
-				}
-			}
-			*/
-			
 			// Reset battery power
 			for (int j = 0; j < TIME_SLOTS; j++) {
 				batteryPower.set(j, 0.0);
