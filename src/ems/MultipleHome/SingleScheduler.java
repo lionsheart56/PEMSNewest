@@ -271,7 +271,6 @@ public class SingleScheduler {
 
     }
 
-
     public ArrayList<Double> getPowerUsage(){
         HybridParticle temp = particleList.get(gBest);
         ArrayList<Double> result = temp.getPower();
@@ -415,7 +414,142 @@ public class SingleScheduler {
             particleList.add(newParticle);
         }
     }
+    private void initialize(ArrayList<Double> other) {
 
+        for (int i = 0; i < MAX_PARTICLES; i++) {
+            int numOfSchedulableAct = schedulableActivity.size();
+
+            // Construct a new particle
+            HybridParticle newParticle = new HybridParticle(numOfSchedulableAct);
+
+            // Random start time of each schedulable activity
+            for (int j = 0; j < numOfSchedulableAct; j++) {
+                // Get activity node and corresponding duration, start/end time
+                ActivityNode actNode = schedulableActivity.get(j);
+                int duration = actNode.getDuration();
+                int startTime = actNode.getStartTime();
+                int endTime = actNode.getEndTime();
+                int period = endTime - duration;
+                int n = period - startTime;
+                double m = Math.random()*n;
+                int initStartTime = (int)m+startTime;
+
+                // Set start time of corresponding activity
+                newParticle.setScheduleData(j, initStartTime);
+                newParticle.setPBestScheduleData(j, initStartTime);
+            }
+
+            // Set allSchedule
+            setScheduledList(newParticle.getScheduleData());
+
+
+            ArrayList<Double> currentPowerConsumption = new ArrayList<Double>();
+            currentPowerConsumption.clear();
+            double totalPowerConsumption = 0.0;
+
+            // Calculate power consumption
+            for (int j = 0; j < TIME_SLOTS; j++) {
+                HashMap<String, Double> standbyPowerClone = (HashMap<String, Double>) applianceStandbyPower.clone();
+                Set<String> appSet = standbyPowerClone.keySet();
+                double powerConsumption = 0.0;
+                currentPowerConsumption.add(0.0);
+
+                // Sum up power consumption of all the activities in current time slot
+                // Remove appliance from standby state
+                if (allSchedule.containsKey(j)) {
+                    ArrayList<ActivityNode> activityList = allSchedule.get(j);
+                    for (ActivityNode actNode : activityList) {
+                        powerConsumption += actNode.getPowerConsumption();
+                        ArrayList<String> appList = actNode.getApplianceList();
+
+                        // Remove appliance from standby mode
+                        for (String appName : appList) {
+                            if (appSet.contains(appName)) {
+                                appSet.remove(appName);
+                            }
+                        }
+                    }
+                }
+
+                // Add standby power consumption
+                for (String appName : appSet) {
+                    double standbyPower = applianceStandbyPower.get(appName);
+                    powerConsumption += standbyPower;
+                }
+
+                // Change watts to kw
+                powerConsumption /= 1000;
+                totalPowerConsumption += powerConsumption;
+                currentPowerConsumption.set(j, powerConsumption);
+            }
+
+            for (int j = 0; j < TIME_SLOTS; j++) {
+                totalPowerConsumption -= solarPowerProfile.get(j);
+            }
+
+
+            // Reset battery power
+            for (int j = 0; j < TIME_SLOTS; j++) {
+                batteryPower.set(j, 0.0);
+            }
+
+            // Random battery operation with constraints
+            for (int j = 0; j < TIME_SLOTS; j++) {
+                if (j == 0) {
+                    batteryPower.set(j, MAX_BATTERY_CAPACITY * 0.2);
+                } else {
+                    // Update batteryPower according to b(t-1)
+                    double currentBatteryPower = 0.0;
+                    double previousBatteryPower = batteryPower.get(j - 1);
+                    double previousBatteryOperation = newParticle.getBatteryData(j - 1);
+                    currentBatteryPower = solarPowerProfile.get(j - 1) + (previousBatteryPower - previousBatteryOperation);
+                    batteryPower.set(j, currentBatteryPower);
+                }
+
+                if (batteryPower.get(j) > MAX_BATTERY_CAPACITY) {
+                    batteryPower.set(j, MAX_BATTERY_CAPACITY);
+                }
+
+                // Set maximum amount of power can be charged
+                double constraint_1 = MAX_BATTERY_CAPACITY - solarPowerProfile.get(j) - batteryPower.get(j);
+                double constraint_2 = (NUM_BATTERY * BATTERY_VOL * 0.3 * BATTERY_AH) / 1000;
+                double maxChargeConstraint = Math.min(constraint_1, constraint_2);
+
+                // Random feasible r
+                // Goal: -(maxChargeConstraint) <= r <= b(t) - (0.2*MAX_B)
+                // (1) 0 <= r <= 1
+                // (2) 0 <= r <= b(t) - (0.2*MAX_B) + maxChargeConstraint
+                // (3) -(maxChargeConstraint) <= r <= b(t) - (0.2*MAX_B)
+                double adjustParameter_1 = batteryPower.get(j) - (0.2 * MAX_BATTERY_CAPACITY) + maxChargeConstraint;
+                double adjustParameter_2 = -maxChargeConstraint;
+                double batteryOperation = new Random().nextDouble() * adjustParameter_1 + adjustParameter_2;
+
+                if (batteryOperation < 0) {
+                    if (totalPowerConsumption == 0) {
+                        batteryOperation = 0;
+                    } else if (totalPowerConsumption > 0){
+                        totalPowerConsumption += batteryOperation;
+                        if (totalPowerConsumption < 0) {
+                            totalPowerConsumption = 0;
+                        }		//allow first over charge to reuse tomorrow ( Init Value )
+                    }
+                } else {
+                    if (batteryOperation > currentPowerConsumption.get(j)) {
+                        batteryOperation = currentPowerConsumption.get(j);
+                    } 		//fang dian
+                }
+
+                // Store r
+                newParticle.setBatteryData(j, batteryOperation);
+                newParticle.setPBestBatteryData(j, batteryOperation);
+            }
+
+            // Evaluate and store particle
+            double fitnessValue = particleEval(newParticle);
+            newParticle.setPBestValue(fitnessValue);
+            particleList.add(newParticle);
+        }
+    }
     /* Calculate Fitness */
     private double particleEval(HybridParticle particle) {
         // Set allSchedule
@@ -497,7 +631,86 @@ public class SingleScheduler {
         }
         return electricityCost;
     }
+    private double particleEval(HybridParticle particle, ArrayList<Double> other) {
+        // Set allSchedule
+        setScheduledList(particle.getScheduleData());
 
+        // Calculate electricity cost
+        double electricityCost = 0;
+
+        // Reset battery power
+        for (int i = 0; i < TIME_SLOTS; i++) {
+            batteryPower.set(i, 0.0);
+        }
+
+        for (int i = 0; i < TIME_SLOTS; i++) {
+            HashMap<String, Double> standbyPowerClone = (HashMap<String, Double>) applianceStandbyPower.clone();
+            Set<String> appSet = standbyPowerClone.keySet();
+            double currentPowerConsumption = 0;
+
+            // Sum up power consumption of all the activities in current time slot
+            // Remove appliance from standby state
+            if (allSchedule.containsKey(i)) {
+                ArrayList<ActivityNode> activityList = allSchedule.get(i);
+                for (ActivityNode actNode : activityList) {
+                    currentPowerConsumption += actNode.getPowerConsumption();
+                    ArrayList<String> appList = actNode.getApplianceList();
+
+                    // Remove appliance from standby mode
+                    for (String appName : appList) {
+                        if (appSet.contains(appName)) {
+                            appSet.remove(appName);
+                        }
+                    }
+                }
+            }
+
+            // Add standby power consumption
+            for (String appName : appSet) {
+                double standbyPower = applianceStandbyPower.get(appName);
+                currentPowerConsumption += standbyPower;
+            }
+
+            // Change watts to kw
+            currentPowerConsumption /= 1000;
+
+            if (i == 0) {
+                batteryPower.set(i, 0.2 * MAX_BATTERY_CAPACITY);
+            } else {
+                // Update batteryPower according to b(t-1)
+                double currentBatteryPower = 0.0;
+                double previousBatteryPower = batteryPower.get(i - 1);
+                double previousBatteryOperation = particle.getBatteryData(i - 1);
+                currentBatteryPower = solarPowerProfile.get(i - 1) + (previousBatteryPower - previousBatteryOperation);
+                batteryPower.set(i, currentBatteryPower);
+            }
+
+            if (batteryPower.get(i) > MAX_BATTERY_CAPACITY) {
+                batteryPower.set(i, MAX_BATTERY_CAPACITY);
+            }
+
+            // Set quantity of charge/discharge
+            double batteryOperation = particle.getBatteryData(i);
+            double currentBatteryPower = batteryPower.get(i);
+            double charge = 0.0;
+            double discharge = 0.0;
+            if (batteryOperation < 0) {
+                charge = Math.abs(batteryOperation);
+            } else {
+                discharge = batteryOperation;
+            }
+
+            // Calculate electricity cost
+            double currentElectricityPrice = electricityPriceProfile.get(i);
+            double neededGridPower = currentPowerConsumption - discharge;
+            if (neededGridPower < 0) {
+                neededGridPower = 0;
+            }
+            particle.addPowerFromUtility(i,neededGridPower + charge);
+            electricityCost += (neededGridPower + charge) * currentElectricityPrice;
+        }
+        return electricityCost;
+    }
     /* Return the best particle at current epoch */
     private int getBestParticle() {
         int bestParticleIndex = 0;
