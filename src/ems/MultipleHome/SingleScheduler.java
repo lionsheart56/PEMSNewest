@@ -144,13 +144,13 @@ public class SingleScheduler {
         boolean done = false;
         int limitCount = 0;
 
-        initialize();
+        initialize(other);
         while (!done) {
             int MAX_EPOCHS;
             MAX_EPOCHS = 1000;
             if (epoch < MAX_EPOCHS) {
                 // Get index of gBest particle for current epoch
-                currentGBestIndex = getBestParticle();
+                currentGBestIndex = getBestParticle(other);
                 // Update gBest for current epoch
                 HybridParticle currentGBest = particleList.get(currentGBestIndex);
                 HybridParticle historyGBest = particleList.get(historyGBestIndex);
@@ -169,7 +169,7 @@ public class SingleScheduler {
                 setVelocity(historyGBestIndex);
 
                 // Update particle according to its velocity
-                updateParticle();
+                updateParticle(other);
                 epoch++;
                 if(limitCount > 20) break;
             } else {
@@ -726,6 +726,21 @@ public class SingleScheduler {
         return bestParticleIndex;
     }
 
+    private int getBestParticle(ArrayList<Double> other) {
+        int bestParticleIndex = 0;
+        for (int i = 1; i < MAX_PARTICLES; i++) {
+            HybridParticle bestParticle = particleList.get(bestParticleIndex);
+            HybridParticle currentParticle = particleList.get(i);
+            double bestFitness = bestParticle.getPBestValue();
+            double currentFitness = currentParticle.getPBestValue();
+            if (currentFitness < bestFitness) {
+                bestParticleIndex = i;
+            }
+        }
+        return bestParticleIndex;
+    }
+
+
     private void setVelocity(int historyGBestIndex) {
         double vValue = 0.0;
         int numOfSchedulableAct = schedulableActivity.size();
@@ -782,8 +797,141 @@ public class SingleScheduler {
     }
 
     /* Move particle and check feasibility and update pBest if necessary */
-	/* Prolbem Here */
     private void updateParticle() {
+        int numOfSchedulableAct = schedulableActivity.size();
+        for (int i = 0; i < MAX_PARTICLES; i++) {
+            HybridParticle currentParticle = particleList.get(i);
+
+            // Set allSchedule list
+            setScheduledList(currentParticle.getScheduleData());
+
+            for(int j = 0 ; j < numOfSchedulableAct; j++){
+
+                //boolean isValid = true;   // Check old startime + velocity is valid
+                int oldStartTime = currentParticle.getScheduleData(j);
+                double vel = currentParticle.getScheduleVel(j);
+                int newStartTime = (int)(oldStartTime + Math.round(vel));
+
+                ActivityNode actNode = schedulableActivity.get(j);
+                int preferStart = actNode.getStartTime();
+                int preferEnd = actNode.getEndTime();
+                int preferDuration = actNode.getDuration();
+                int deadline = preferEnd - preferDuration;
+                if(deadline < preferStart) System.out.println("Fuck you");
+                if(newStartTime > deadline){
+                    currentParticle.setScheduleData(j, deadline);
+                }else if(newStartTime < preferStart){
+                    currentParticle.setScheduleData(j, preferStart);
+                }else
+                    currentParticle.setScheduleData(j, newStartTime);
+            }
+
+            // Reset battery power
+            for (int j = 0; j < TIME_SLOTS; j++) {
+                batteryPower.set(j, 0.0);
+            }
+
+            for (int j = 0; j < TIME_SLOTS; j++) {
+                HashMap<String, Double> standbyPowerClone = (HashMap<String, Double>) applianceStandbyPower.clone();
+                Set<String> appSet = standbyPowerClone.keySet();
+
+                // Calculate power consumption as constraint fix value
+                double currentPowerConsumption = 0;
+
+                // Sum up power consumption of all activities in current time slot
+                if (allSchedule.containsKey(j)) {
+                    ArrayList<ActivityNode> activityList = allSchedule.get(j);
+                    for (ActivityNode actNode : activityList) {
+                        currentPowerConsumption += actNode.getPowerConsumption();
+                        ArrayList<String> appList = actNode.getApplianceList();
+
+                        // Remove appliance from standby mode
+                        for (String appName : appList) {
+                            if (appSet.contains(appName)) {
+                                appSet.remove(appName);
+                            }
+                        }
+                    }
+                }
+
+                // Add standby power consumption
+                for (String appName : appSet) {
+                    double standbyPower = applianceStandbyPower.get(appName);
+                    currentPowerConsumption += standbyPower;
+                }
+
+                // Change watts to kw
+                currentPowerConsumption /= 1000;
+
+                if (j == 0) {
+                    batteryPower.set(j, MAX_BATTERY_CAPACITY * 0.2);
+                } else {
+                    // Update battery power according to b(t-1)
+                    double currentBatteryPower = 0.0;
+                    double previousBatteryPower = batteryPower.get(j - 1);
+                    double previousBatteryOperation = currentParticle.getBatteryData(j - 1);
+                    currentBatteryPower = solarPowerProfile.get(j - 1) + (previousBatteryPower - previousBatteryOperation);
+                    batteryPower.set(j, currentBatteryPower);
+                }
+
+                if (batteryPower.get(j) > MAX_BATTERY_CAPACITY) {
+                    batteryPower.set(j, MAX_BATTERY_CAPACITY);
+                }
+
+                // Update new battery operation according to constraints
+                // Here we set value to boundary if it exceeds the boundary
+                double oldBatteryOperation = currentParticle.getBatteryData(j);
+                double velocity = currentParticle.getBatteryVel(j);
+                double newBatteryOperation = oldBatteryOperation + velocity;
+                double currentBatteryPower = batteryPower.get(j);
+                double constraint_1 = MAX_BATTERY_CAPACITY - solarPowerProfile.get(j) - currentBatteryPower;
+                double constraint_2 = (NUM_BATTERY * BATTERY_VOL * 0.3 * BATTERY_AH) / 1000;
+                double maxChargeConstraint = Math.min(constraint_1, constraint_2);
+                double upperBound = currentBatteryPower - 0.2 * MAX_BATTERY_CAPACITY;
+                double lowerBound = -maxChargeConstraint;
+
+                // We deal with 3 kinds of bad operations
+                // 1. If overuse the battery power
+                // 2. If exceeding the upper bound
+                // 3. If exceeding the lower bound
+                if (currentPowerConsumption == 0 && batteryPower.get(j) == 0.2 * MAX_BATTERY_CAPACITY) {
+                    if (newBatteryOperation > 0) {
+                        newBatteryOperation = 0;
+                    } else if (newBatteryOperation < lowerBound) {
+                        newBatteryOperation = lowerBound;
+                    }
+                } else if (newBatteryOperation > currentPowerConsumption && newBatteryOperation <= upperBound) {
+                    if (currentPowerConsumption < batteryPower.get(j)) {
+                        newBatteryOperation = currentPowerConsumption;
+                    }
+                } else if (newBatteryOperation > upperBound) {
+                    newBatteryOperation = upperBound;
+                } else if (newBatteryOperation < lowerBound) {
+                    newBatteryOperation = lowerBound;
+                }
+
+                // Set new data
+                currentParticle.setBatteryData(j, newBatteryOperation);
+            }
+
+            // Update pBestData and pBestValue if particle's currentFitness < pPbestFitness
+            double currentFitness = particleEval(currentParticle);
+            double pBestFitness = currentParticle.getPBestValue();
+            if (currentFitness < pBestFitness) {
+                currentParticle.setPBestValue(currentFitness);
+                for (int j = 0; j < numOfSchedulableAct; j++) {
+                    int newStartTime = currentParticle.getScheduleData(j);
+                    currentParticle.setPBestScheduleData(j, newStartTime);
+                }
+                for (int j = 0; j < TIME_SLOTS; j++) {
+                    double newBatteryUsage = currentParticle.getBatteryData(j);
+                    currentParticle.setPBestBatteryData(j, newBatteryUsage);
+                }
+            }
+        }
+    }
+
+    private void updateParticle(ArrayList<Double> other) {
         int numOfSchedulableAct = schedulableActivity.size();
         for (int i = 0; i < MAX_PARTICLES; i++) {
             HybridParticle currentParticle = particleList.get(i);
