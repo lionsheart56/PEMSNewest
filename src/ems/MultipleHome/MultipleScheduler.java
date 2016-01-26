@@ -38,12 +38,52 @@ public class MultipleScheduler {
             lastStratgy.add(i, temp.getAllSchedule());
             allPowerUsage.add(i, temp.getPowerUsage());
         }
-        System.out.println(calOthers(0,allPowerUsage));
-        System.out.println("===============");
-        System.out.println(allPowerUsage.get(1));
+        //System.out.println(calOthers(0,allPowerUsage));
+        //System.out.println("===============");
+       // System.out.println(allPowerUsage.get(1));
+
+        boolean flag = false;
+        int count = 0;
+        while(!flag){
+            List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
+            for(int i=0;i<numOfHome;i++){
+                SingleScheduler temp = allHome.get(i);
+                temp.PSOAlgorithm(calOthers(i, allPowerUsage));
+                allPowerUsage.set(i, temp.getPowerUsage());
+                curStratgy.add(i, temp.getAllSchedule());
+            }
+
+            for(int i=0;i<lastStratgy.size();i++){
+                boolean temp = isSame(lastStratgy.get(i), curStratgy.get(i));
+                if(temp == false){
+                    flag = false;
+                    break;
+                }
+                flag = true;
+            }
+
+            for(int i=0;i<lastStratgy.size();i++){
+                lastStratgy.set(i,curStratgy.get(i));
+            }
+            System.out.println("======= " + count + " ==========");
+            count ++;
+            if(count > 10) break;
+        }
+        for(int i = 0;i<numOfHome;i++){
+            allHome.get(i).printSchedule(allHome.get(i).gBest);
+            allHome.get(i).printSolution(allHome.get(i).gBest);
+            System.out.println("==================");
+        }
+
+
+
     }
 
-    public boolean isDiffer(HashMap<Integer, ArrayList<ActivityNode>> k, HashMap<Integer, ArrayList<ActivityNode>> v){
+    public double getPar(List<ArrayList<Double>> allPowerUsage){
+        return 1.0;
+    }
+
+    public boolean isSame(HashMap<Integer, ArrayList<ActivityNode>> k, HashMap<Integer, ArrayList<ActivityNode>> v){
         return k.equals(v);
     }  //Done
 
