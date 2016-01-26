@@ -17,7 +17,7 @@ public class SingleScheduler {
     private final int BATTERY_VOL = 12;
     private final double MAX_BATTERY_CAPACITY = (double)(NUM_BATTERY * BATTERY_AH * BATTERY_VOL) / 1000;
 
-    private int gBest = 0;
+    public int gBest = 0;
 
     /* Information from _input_data */
     private ArrayList<ActivityNode> schedulableActivity = new ArrayList<ActivityNode>();
@@ -150,15 +150,15 @@ public class SingleScheduler {
             MAX_EPOCHS = 1000;
             if (epoch < MAX_EPOCHS) {
                 // Get index of gBest particle for current epoch
-                currentGBestIndex = getBestParticle(other);
+                currentGBestIndex = getBestParticle();
                 // Update gBest for current epoch
                 HybridParticle currentGBest = particleList.get(currentGBestIndex);
                 HybridParticle historyGBest = particleList.get(historyGBestIndex);
                 double currentGBestFitness = currentGBest.getPBestValue();
                 double historyGBestFitness = historyGBest.getPBestValue();
-                if(currentGBestFitness - historyGBestFitness < 1){
+                if(currentGBestFitness - historyGBestFitness < 0.1){
                     limitCount +=1;
-                }else if(historyGBestFitness - currentGBestFitness < 1){
+                }else if(historyGBestFitness - currentGBestFitness < 0.1){
                     limitCount +=1;
                 }
                 if (currentGBestFitness < historyGBestFitness) {
@@ -179,12 +179,12 @@ public class SingleScheduler {
         long endTime = Calendar.getInstance().getTimeInMillis();
         long duration = endTime - startTime;
 
-        printSchedule(historyGBestIndex);
-        printSolution(historyGBestIndex);
+        //printSchedule(historyGBestIndex);
+        //printSolution(historyGBestIndex);
         gBest = historyGBestIndex;
 
-        System.out.println("Second:" + duration/1000);
-        System.out.println("Minute:" + duration/60000);
+        //System.out.println("Second:" + duration/1000);
+        //System.out.println("Minute:" + duration/60000);
 
     }
 
@@ -273,6 +273,11 @@ public class SingleScheduler {
 
     public ArrayList<Double> getPowerUsage(){
         HybridParticle temp = particleList.get(gBest);
+        ArrayList<Double> result = temp.getPower();
+        return result;
+    }
+    public ArrayList<Double> getPowerUsage(int index){
+        HybridParticle temp = particleList.get(index);
         ArrayList<Double> result = temp.getPower();
         return result;
     }
@@ -709,8 +714,110 @@ public class SingleScheduler {
             particle.addPowerFromUtility(i,neededGridPower + charge);
             electricityCost += (neededGridPower + charge) * currentElectricityPrice;
         }
-        return electricityCost;
+
+        double par = getPar(this.getPowerUsage(), other);
+
+        return par;
     }
+
+    private double particleEval(HybridParticle particle, ArrayList<Double> other, int index) {
+        // Set allSchedule
+        setScheduledList(particle.getScheduleData());
+
+        // Calculate electricity cost
+        double electricityCost = 0;
+
+        // Reset battery power
+        for (int i = 0; i < TIME_SLOTS; i++) {
+            batteryPower.set(i, 0.0);
+        }
+
+        for (int i = 0; i < TIME_SLOTS; i++) {
+            HashMap<String, Double> standbyPowerClone = (HashMap<String, Double>) applianceStandbyPower.clone();
+            Set<String> appSet = standbyPowerClone.keySet();
+            double currentPowerConsumption = 0;
+
+            // Sum up power consumption of all the activities in current time slot
+            // Remove appliance from standby state
+            if (allSchedule.containsKey(i)) {
+                ArrayList<ActivityNode> activityList = allSchedule.get(i);
+                for (ActivityNode actNode : activityList) {
+                    currentPowerConsumption += actNode.getPowerConsumption();
+                    ArrayList<String> appList = actNode.getApplianceList();
+
+                    // Remove appliance from standby mode
+                    for (String appName : appList) {
+                        if (appSet.contains(appName)) {
+                            appSet.remove(appName);
+                        }
+                    }
+                }
+            }
+
+            // Add standby power consumption
+            for (String appName : appSet) {
+                double standbyPower = applianceStandbyPower.get(appName);
+                currentPowerConsumption += standbyPower;
+            }
+
+            // Change watts to kw
+            currentPowerConsumption /= 1000;
+
+            if (i == 0) {
+                batteryPower.set(i, 0.2 * MAX_BATTERY_CAPACITY);
+            } else {
+                // Update batteryPower according to b(t-1)
+                double currentBatteryPower = 0.0;
+                double previousBatteryPower = batteryPower.get(i - 1);
+                double previousBatteryOperation = particle.getBatteryData(i - 1);
+                currentBatteryPower = solarPowerProfile.get(i - 1) + (previousBatteryPower - previousBatteryOperation);
+                batteryPower.set(i, currentBatteryPower);
+            }
+
+            if (batteryPower.get(i) > MAX_BATTERY_CAPACITY) {
+                batteryPower.set(i, MAX_BATTERY_CAPACITY);
+            }
+
+            // Set quantity of charge/discharge
+            double batteryOperation = particle.getBatteryData(i);
+            double currentBatteryPower = batteryPower.get(i);
+            double charge = 0.0;
+            double discharge = 0.0;
+            if (batteryOperation < 0) {
+                charge = Math.abs(batteryOperation);
+            } else {
+                discharge = batteryOperation;
+            }
+
+            // Calculate electricity cost
+            double currentElectricityPrice = electricityPriceProfile.get(i);
+            double neededGridPower = currentPowerConsumption - discharge;
+            if (neededGridPower < 0) {
+                neededGridPower = 0;
+            }
+            particle.addPowerFromUtility(i,neededGridPower + charge);
+            electricityCost += (neededGridPower + charge) * currentElectricityPrice;
+        }
+
+        double par = getPar(this.getPowerUsage(index), other);
+
+        return par;
+    }
+
+    public double getPar(ArrayList<Double> own, ArrayList<Double> other){
+        double PAR = 0.0;
+        double MAX = 0.0;
+        double Avg = 0.0;
+        for(int i=0;i<MultiScheduler.TIME_SLOTS; i++){
+            double temp = own.get(i) + other.get(i);
+            Avg = Avg + temp;
+            if(temp > MAX) MAX = temp;
+        }
+        Avg = Avg / 24.0;
+        PAR = MAX / Avg;
+        return PAR;
+    }
+
     /* Return the best particle at current epoch */
     private int getBestParticle() {
         int bestParticleIndex = 0;
@@ -725,21 +832,6 @@ public class SingleScheduler {
         }
         return bestParticleIndex;
     }
-
-    private int getBestParticle(ArrayList<Double> other) {
-        int bestParticleIndex = 0;
-        for (int i = 1; i < MAX_PARTICLES; i++) {
-            HybridParticle bestParticle = particleList.get(bestParticleIndex);
-            HybridParticle currentParticle = particleList.get(i);
-            double bestFitness = bestParticle.getPBestValue();
-            double currentFitness = currentParticle.getPBestValue();
-            if (currentFitness < bestFitness) {
-                bestParticleIndex = i;
-            }
-        }
-        return bestParticleIndex;
-    }
-
 
     private void setVelocity(int historyGBestIndex) {
         double vValue = 0.0;
@@ -1049,7 +1141,7 @@ public class SingleScheduler {
             }
 
             // Update pBestData and pBestValue if particle's currentFitness < pPbestFitness
-            double currentFitness = particleEval(currentParticle);
+            double currentFitness = particleEval(currentParticle, other);
             double pBestFitness = currentParticle.getPBestValue();
             if (currentFitness < pBestFitness) {
                 currentParticle.setPBestValue(currentFitness);
@@ -1070,7 +1162,7 @@ public class SingleScheduler {
     }
 
     /* Print out details of the best solution */
-    private void printSolution(int historyGBestIndex) {
+    public void printSolution(int historyGBestIndex) {
         HybridParticle particle = particleList.get(historyGBestIndex);
 
         // Set all schedule list
@@ -1187,7 +1279,7 @@ public class SingleScheduler {
     }
 
     /* Print out the final schedule */
-    private void printSchedule(int historyGBestIndex) {
+    public void printSchedule(int historyGBestIndex) {
         HybridParticle particle = particleList.get(historyGBestIndex);
 
         // Sort final schedule
