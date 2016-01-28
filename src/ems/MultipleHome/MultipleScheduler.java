@@ -86,7 +86,7 @@ public class MultipleScheduler {
     public boolean isSame(HashMap<Integer, ArrayList<ActivityNode>> k, HashMap<Integer, ArrayList<ActivityNode>> v){
         return k.equals(v);
     }  //Done
-
+    //Hi
     public ArrayList<Double> calOthers(int index, List<ArrayList<Double>> allPowerUsage){
         ArrayList<Double> result = new ArrayList<Double>();
         for(int i=0;i<MultiScheduler.TIME_SLOTS;i++){
