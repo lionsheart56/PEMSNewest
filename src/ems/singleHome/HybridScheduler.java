@@ -6,6 +6,8 @@ import ems.datastructure.ActivityNode;
 import ems.datastructure.Environment;
 import ems.datastructure.HybridParticle;
 
+import static java.lang.Math.*;
+
 public class HybridScheduler {
 	private final int MAX_PARTICLES = 1000;
 	private final int TIME_SLOTS = Scheduler.TIME_SLOTS;
@@ -91,7 +93,7 @@ public class HybridScheduler {
 				HybridParticle historyGBest = particleList.get(historyGBestIndex);
 				double currentGBestFitness = currentGBest.getPBestValue();
 				double historyGBestFitness = historyGBest.getPBestValue();
-				if(currentGBestFitness - historyGBestFitness < 1){
+				if(abs(currentGBestFitness - historyGBestFitness) < 1){
 					limitCount +=1;
 				}else if(historyGBestFitness - currentGBestFitness < 1){
 					limitCount +=1;
@@ -231,7 +233,7 @@ public class HybridScheduler {
 				int endTime = actNode.getEndTime();
 				int period = endTime - duration;
 				int n = period - startTime;
-				double m = Math.random()*n;
+				double m = random()*n;
 				int initStartTime = (int)m+startTime;
 
 				// Set start time of corresponding activity
@@ -313,7 +315,7 @@ public class HybridScheduler {
 				// Set maximum amount of power can be charged
 				double constraint_1 = MAX_BATTERY_CAPACITY - solarPowerProfile.get(j) - batteryPower.get(j);
 				double constraint_2 = (NUM_BATTERY * BATTERY_VOL * 0.3 * BATTERY_AH) / 1000;
-				double maxChargeConstraint = Math.min(constraint_1, constraint_2);
+				double maxChargeConstraint = min(constraint_1, constraint_2);
 				
 				// Random feasible r
 				// Goal: -(maxChargeConstraint) <= r <= b(t) - (0.2*MAX_B)
@@ -416,7 +418,7 @@ public class HybridScheduler {
 			double charge = 0.0;
 			double discharge = 0.0;
 			if (batteryOperation < 0) {
-				charge = Math.abs(batteryOperation);
+				charge = abs(batteryOperation);
 			} else {
 				discharge = batteryOperation;
 			}
@@ -517,7 +519,7 @@ public class HybridScheduler {
 				//boolean isValid = true;   // Check old startime + velocity is valid
 				int oldStartTime = currentParticle.getScheduleData(j);
 				double vel = currentParticle.getScheduleVel(j);
-				int newStartTime = (int)(oldStartTime + Math.round(vel));
+				int newStartTime = (int)(oldStartTime + round(vel));
 
 				ActivityNode actNode = schedulableActivity.get(j);
 				int preferStart = actNode.getStartTime();
@@ -593,7 +595,7 @@ public class HybridScheduler {
 				double currentBatteryPower = batteryPower.get(j);
 				double constraint_1 = MAX_BATTERY_CAPACITY - solarPowerProfile.get(j) - currentBatteryPower;
 				double constraint_2 = (NUM_BATTERY * BATTERY_VOL * 0.3 * BATTERY_AH) / 1000;
-				double maxChargeConstraint = Math.min(constraint_1, constraint_2);
+				double maxChargeConstraint = min(constraint_1, constraint_2);
 				double upperBound = currentBatteryPower - 0.2 * MAX_BATTERY_CAPACITY;
 				double lowerBound = -maxChargeConstraint;
 				
@@ -720,7 +722,7 @@ public class HybridScheduler {
 			// Set quantity of charge/discharge
 			double batteryOperation = particle.getPBestBatteryData(i);
 			if (batteryOperation < 0) {
-				charge.set(i, Math.abs(batteryOperation));
+				charge.set(i, abs(batteryOperation));
 			} else {
 				discharge.set(i, batteryOperation);
 			}
@@ -741,22 +743,22 @@ public class HybridScheduler {
 			System.out.print("	");
 			System.out.print(i);
 			System.out.print("	");
-			System.out.print((double)Math.round(totalPowerConsumption.get(i) * 1000) / 1000);
+			System.out.print((double) round(totalPowerConsumption.get(i) * 1000) / 1000);
 			System.out.print("	");
-			System.out.print((double)Math.round(powerFromUtility.get(i) * 1000) / 1000);
+			System.out.print((double) round(powerFromUtility.get(i) * 1000) / 1000);
 			System.out.print("	");
-			System.out.print((double)Math.round(discharge.get(i) * 1000) / 1000);
+			System.out.print((double) round(discharge.get(i) * 1000) / 1000);
 			System.out.print("	");
-			System.out.print((double)Math.round(charge.get(i) * 1000) / 1000);
+			System.out.print((double) round(charge.get(i) * 1000) / 1000);
 			System.out.print("	");
-			System.out.print((double)Math.round(solarPowerProfile.get(i) * 1000) / 1000);
+			System.out.print((double) round(solarPowerProfile.get(i) * 1000) / 1000);
 			System.out.print("	");
-			System.out.print((double)Math.round(batteryPower.get(i) * 1000) / 1000);
+			System.out.print((double) round(batteryPower.get(i) * 1000) / 1000);
 			System.out.print("	");
-			System.out.println((double)Math.round(totalElectricityCost.get(i) * 1000) / 1000);
+			System.out.println((double) round(totalElectricityCost.get(i) * 1000) / 1000);
 		}
 		
-		System.out.println("Total Electricity Cost:" + (double)Math.round(electricityCost * 1000) / 1000);
+		System.out.println("Total Electricity Cost:" + (double) round(electricityCost * 1000) / 1000);
 	}
 	
 	/* Print out the final schedule */

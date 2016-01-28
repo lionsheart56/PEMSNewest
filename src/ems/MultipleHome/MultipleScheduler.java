@@ -61,7 +61,8 @@ public class MultipleScheduler {
                 curCost.add(i, temp.getCost());
             }
             double curPar = getPar(allPowerUsage);
-            if(curPar - lastPAR < 0.5 ){
+            if(Math.abs(curPar - lastPAR) < 0.7 || Math.abs(lastPAR - curPar) < 0.53 ){
+                System.out.println(curPar + " | " + lastPAR);
                 acceptCount++;
             }else{
               acceptCount = 0;
