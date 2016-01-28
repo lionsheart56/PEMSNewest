@@ -17,6 +17,7 @@ public class MultipleScheduler {
     //Use to store the strategy of each house.
     public List<ArrayList<Double>> allPowerUsage = new ArrayList<ArrayList<Double>>();
     public ArrayList<Double> lastCost = new ArrayList<Double>();
+    public double lastPAR = 0.0;
 
     public MultipleScheduler(String[] args){
 
@@ -43,12 +44,13 @@ public class MultipleScheduler {
         System.out.println("\n===============");
         System.out.println("PAR is  " + getPar(allPowerUsage));
         System.out.println("===============\n");
+        lastPAR = getPar(allPowerUsage);
         // System.out.println(allPowerUsage.get(1));
 
         boolean flag = false;
         int count = 0;
         int acceptCount = 0;
-        while(acceptCount < 20){
+        while(acceptCount < 10){
             List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
             ArrayList<Double> curCost = new ArrayList<Double>();
             for(int i=0;i<numOfHome;i++){
@@ -58,7 +60,14 @@ public class MultipleScheduler {
                 curStratgy.add(i, temp.getAllSchedule());
                 curCost.add(i, temp.getCost());
             }
-
+            double curPar = getPar(allPowerUsage);
+            if(curPar - lastPAR < 0.5 ){
+                acceptCount++;
+            }else{
+              acceptCount = 0;
+            }
+            lastPAR = curPar;
+            /*
             for(int i=0;i<lastCost.size();i++){
                 boolean temp = isAccept(lastCost.get(i), curCost.get(i));
                 if(temp == false){
@@ -68,10 +77,14 @@ public class MultipleScheduler {
                 }
                 flag = true;
             }
-            if(flag == true) acceptCount++;
+            if(flag == true){ System.out.println("Hi"); acceptCount++;}
+            */
+
+
 
             for(int i=0;i<lastStratgy.size();i++){
                 lastStratgy.set(i,curStratgy.get(i));
+                lastCost.set(i,curCost.get(i));
            //     allHome.get(i).printSchedule(allHome.get(i).gBest);
              //   allHome.get(i).print();
             }
@@ -95,7 +108,8 @@ public class MultipleScheduler {
     }
 
     public boolean isAccept(Double e, Double k){
-        if (k - e < 1) return true;
+        System.out.println(e + " | " + k);
+        if (k - e < 0.5) return true;
         else return false;
     }
 
