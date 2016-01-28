@@ -18,7 +18,7 @@ public class SingleScheduler {
     private final double MAX_BATTERY_CAPACITY = (double)(NUM_BATTERY * BATTERY_AH * BATTERY_VOL) / 1000;
 
     public int gBest = 0;
-
+    public double electricityCost = 0.0;
     /* Information from _input_data */
     private ArrayList<ActivityNode> schedulableActivity = new ArrayList<ActivityNode>();
     private ArrayList<ActivityNode> nonSchedulableActivity = new ArrayList<ActivityNode>();
@@ -26,6 +26,12 @@ public class SingleScheduler {
     private HashMap<Integer, Double> solarPowerProfile = new HashMap<Integer, Double>();
     private HashMap<Integer, Double> electricityPriceProfile = new HashMap<Integer, Double>();
     private HashMap<String, Double> applianceStandbyPower = new HashMap<String, Double>();
+
+    ArrayList<Double> totalPowerConsumption = new ArrayList<Double>(TIME_SLOTS);
+    ArrayList<Double> powerFromUtility = new ArrayList<Double>(TIME_SLOTS);
+    ArrayList<Double> totalElectricityCost = new ArrayList<Double>(TIME_SLOTS);
+    ArrayList<Double> charge = new ArrayList<Double>(TIME_SLOTS);
+    ArrayList<Double> discharge = new ArrayList<Double>(TIME_SLOTS);
 
     /* Used to store all the particles */
     private ArrayList<HybridParticle> particleList;
@@ -121,6 +127,7 @@ public class SingleScheduler {
 
         printSchedule(historyGBestIndex);
         printSolution(historyGBestIndex);
+        print();
         gBest = historyGBestIndex;
 
         System.out.println("Second:" + duration/1000);
@@ -1167,12 +1174,13 @@ public class SingleScheduler {
 
         // Set all schedule list
         setScheduledList(particle.getPBestScheduleData());
-
+        /*
         ArrayList<Double> totalPowerConsumption = new ArrayList<Double>(TIME_SLOTS);
         ArrayList<Double> powerFromUtility = new ArrayList<Double>(TIME_SLOTS);
         ArrayList<Double> totalElectricityCost = new ArrayList<Double>(TIME_SLOTS);
         ArrayList<Double> charge = new ArrayList<Double>(TIME_SLOTS);
         ArrayList<Double> discharge = new ArrayList<Double>(TIME_SLOTS);
+        */
         for (int i = 0; i < TIME_SLOTS; i++) {
             charge.add(0.0);
             discharge.add(0.0);
@@ -1180,7 +1188,7 @@ public class SingleScheduler {
             powerFromUtility.add(0.0);
             totalElectricityCost.add(0.0);
         }
-        double electricityCost = 0;
+        electricityCost = 0;
 
         // Reset battery state
         for (int i = 0; i < TIME_SLOTS; i++) {
@@ -1254,6 +1262,13 @@ public class SingleScheduler {
             electricityCost += currentElectricityCost;
         }
 
+    }
+
+    public double getCost(){
+        return this.electricityCost;
+    }
+
+    public void print(){
         System.out.println("Algorithm	Time	Power Consumption	Power From Utility Company	Discharge	Charge	Solar Power	Battery State	Electricity Cost");
         for (int i = 0; i < TIME_SLOTS; i++) {
             System.out.print("Our Method");

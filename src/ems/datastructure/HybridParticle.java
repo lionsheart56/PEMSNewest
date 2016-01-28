@@ -13,6 +13,8 @@ public class HybridParticle {
 	private ArrayList<Double> batteryVel;
 	private ArrayList<Double> powerFromUtility;
 	private double pBestValue = 0.0;
+	private double powerCons = 0.0;
+
 	
 	// Initialization
 	public HybridParticle(int numOfSchedulableAct){
@@ -43,6 +45,10 @@ public class HybridParticle {
 	public ArrayList<Double> getPower(){
 		return this.powerFromUtility;
 	}
+
+	public double getPowerCons(){ return this.powerCons;}
+
+	public void setPowerCons(double val){ this.powerCons = val;}
 
 	public ArrayList<Integer> getScheduleData(){
 		return this.scheduleData;
