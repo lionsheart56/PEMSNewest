@@ -38,6 +38,7 @@ public class MultipleScheduler {
             temp.PSOAlgorithm();
             allPowerUsage.add(i, temp.getPowerUsage());
             lastCost.add(i, temp.xCost);
+
         }
         System.out.println("Cost " + lastCost);
         System.out.println("PAR " + getPar(allPowerUsage));
@@ -55,43 +56,49 @@ public class MultipleScheduler {
 
     public void exec(){
 
-
+        //System.out.println("------- Consider about cost, to reduce PAR -------");
+        System.out.println("------- Do not consider cost, just reduce PAR -------");
+        ArrayList<Double> curCost = new ArrayList<Double>();
+        ArrayList<Double> finalCost = new ArrayList<Double>();
+        List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
         for(int i=0;i<numOfHome;i++){
             SingleScheduler temp = allHome.get(i);
             temp.PSOAlgorithm();
             allPowerUsage.add(temp.getPowerUsage());
+            finalPowerUsage.add(temp.getPowerUsage());
             lastCost.add(temp.xCost);
+            curCost.add(temp.getCost());
+            finalCost.add(temp.getCost());
+            curStratgy.add(temp.getAllSchedule());
+            finalStratgy.add(temp.getAllSchedule());
         }
         System.out.println("\n===============");
         System.out.println("PAR is  " + getPar(allPowerUsage));
         System.out.println("===============\n");
         lastPAR = getPar(allPowerUsage);
 
+        long startTime = Calendar.getInstance().getTimeInMillis();
+
         int steps = 0;
         double minPAR = lastPAR;
         double curPAR = 0;
-        ArrayList<Double> finalCost = new ArrayList<Double>();
+
 
         while(steps++ < 50){
-            ArrayList<Double> curCost = new ArrayList<Double>();
-            List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
+
             for(int i=0;i<numOfHome;i++){
                 SingleScheduler temp = allHome.get(i);
                 temp.PSOAlgorithm(calOthers(i, allPowerUsage));
                // temp.printSolution(temp.gBest);
                 allPowerUsage.set(i, temp.getPowerUsage());
-                finalPowerUsage.add(temp.getPowerUsage());
-
-                curCost.add(temp.getCost());
-                finalCost.add(temp.getCost());
-                curStratgy.add(temp.getAllSchedule());
-                finalStratgy.add(temp.getAllSchedule());
+                curCost.set(i,temp.getCost());
+                curStratgy.set(i,temp.getAllSchedule());
             }
             curPAR = getPar(allPowerUsage);
             //System.out.println("======= " + steps + " ==========");
             //if(curPAR < minPAR && checkCost(lastCost, curCost, 1.5) ){
             if(curPAR < minPAR){
-                //System.out.println("ddd");
+               // System.out.println("ddd");
                 minPAR = curPAR;
                 for(int i=0;i<numOfHome;i++) {
                     finalSol.set(i,allHome.get(i));
@@ -102,8 +109,11 @@ public class MultipleScheduler {
                     //System.out.println("minPAR is  " + getPar(finalPowerUsage));
                 }
             }
-            finalPowerUsage.clear();
+            //finalPowerUsage.clear();
         }
+        long endTime = Calendar.getInstance().getTimeInMillis();
+        long duration = endTime - startTime;
+
         System.out.println("--------------END---------------");
 
         for(int i = 0;i<numOfHome;i++){
@@ -135,7 +145,9 @@ public class MultipleScheduler {
         System.out.println("\n===============");
         System.out.println("PAR is  " + minPAR);
         //System.out.println("allPAR is  " + getPar(finalPowerUsage));
-        System.out.println("===============\n");
+        System.out.println("===============");
+        System.out.println("Second:" + duration/1000);
+        System.out.println("Minute:" + duration/60000);
 
 
     }
