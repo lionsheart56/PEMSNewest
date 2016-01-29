@@ -18,7 +18,9 @@ public class SingleScheduler {
     private final double MAX_BATTERY_CAPACITY = (double)(NUM_BATTERY * BATTERY_AH * BATTERY_VOL) / 1000;
 
     public int gBest = 0;
+    public double tempCost = 0.0;
     public double electricityCost = 0.0;
+    public double xCost = 0.0;
     /* Information from _input_data */
     private ArrayList<ActivityNode> schedulableActivity = new ArrayList<ActivityNode>();
     private ArrayList<ActivityNode> nonSchedulableActivity = new ArrayList<ActivityNode>();
@@ -187,7 +189,7 @@ public class SingleScheduler {
         long duration = endTime - startTime;
 
         //printSchedule(historyGBestIndex);
-        //printSolution(historyGBestIndex);
+        printSolution(historyGBestIndex);
         gBest = historyGBestIndex;
 
         //System.out.println("Second:" + duration/1000);
@@ -641,6 +643,7 @@ public class SingleScheduler {
             particle.addPowerFromUtility(i,neededGridPower + charge);
             electricityCost += (neededGridPower + charge) * currentElectricityPrice;
         }
+        //tempCost = electricityCost;
         return electricityCost;
     }
     private double particleEval(HybridParticle particle, ArrayList<Double> other) {
@@ -722,8 +725,9 @@ public class SingleScheduler {
             electricityCost += (neededGridPower + charge) * currentElectricityPrice;
         }
 
-        double par = getPar(this.getPowerUsage(), other);
 
+        double par = getPar(this.getPowerUsage(), other);
+        tempCost = electricityCost;
         return par;
     }
 
@@ -1018,6 +1022,7 @@ public class SingleScheduler {
             double pBestFitness = currentParticle.getPBestValue();
             if (currentFitness < pBestFitness) {
                 currentParticle.setPBestValue(currentFitness);
+                currentParticle.setBestCost(tempCost);
                 for (int j = 0; j < numOfSchedulableAct; j++) {
                     int newStartTime = currentParticle.getScheduleData(j);
                     currentParticle.setPBestScheduleData(j, newStartTime);
@@ -1152,6 +1157,7 @@ public class SingleScheduler {
             double pBestFitness = currentParticle.getPBestValue();
             if (currentFitness < pBestFitness) {
                 currentParticle.setPBestValue(currentFitness);
+                currentParticle.setBestCost(tempCost);
                 for (int j = 0; j < numOfSchedulableAct; j++) {
                     int newStartTime = currentParticle.getScheduleData(j);
                     currentParticle.setPBestScheduleData(j, newStartTime);
@@ -1265,7 +1271,8 @@ public class SingleScheduler {
     }
 
     public double getCost(){
-        return this.electricityCost;
+        HybridParticle particle = particleList.get(gBest);
+        return particle.getBestCost();
     }
 
     public void print(){
@@ -1289,7 +1296,7 @@ public class SingleScheduler {
             System.out.print("\t");
             System.out.println((double)Math.round(totalElectricityCost.get(i) * 1000) / 1000);
         }
-
+        xCost = electricityCost;
         System.out.println("Total Electricity Cost:" + (double)Math.round(electricityCost * 1000) / 1000);
     }
 
@@ -1319,7 +1326,7 @@ public class SingleScheduler {
         }
     }
 
-    private void printBestResult(int historyGBestIndex) {
+    public void printBestResult(int historyGBestIndex) {
         HybridParticle particle = particleList.get(historyGBestIndex);
         System.out.println("Cost:" + particle.getPBestValue());
     }

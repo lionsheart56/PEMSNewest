@@ -14,6 +14,7 @@ public class HybridParticle {
 	private ArrayList<Double> powerFromUtility;
 	private double pBestValue = 0.0;
 	private double powerCons = 0.0;
+	private double bestCost = 0.0;
 
 	
 	// Initialization
@@ -37,6 +38,10 @@ public class HybridParticle {
 			this.powerFromUtility.add(0.0);
 		}
 	}
+
+	public void setBestCost(double val){this.bestCost = val;}
+
+	public double getBestCost(){return this.bestCost;}
 
 	public void addPowerFromUtility(int key, double consumption){
 		this.powerFromUtility.set(key, consumption);

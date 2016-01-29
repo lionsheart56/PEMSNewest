@@ -4,9 +4,8 @@ package ems.MultipleHome;
  * Created by LionKuo on 2016/1/23.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+
 import ems.datastructure.ActivityNode;
 
 
@@ -14,10 +13,14 @@ public class MultipleScheduler {
     public ArrayList<SingleScheduler> allHome = new ArrayList<SingleScheduler>();
     private int numOfHome = 0;
     public List<HashMap<Integer, ArrayList<ActivityNode>>> lastStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
+    ArrayList<SingleScheduler> finalSol = new ArrayList<SingleScheduler>();
+    public List<HashMap<Integer, ArrayList<ActivityNode>>> finalStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
     //Use to store the strategy of each house.
     public List<ArrayList<Double>> allPowerUsage = new ArrayList<ArrayList<Double>>();
+    public List<ArrayList<Double>> finalPowerUsage = new ArrayList<ArrayList<Double>>();
     public ArrayList<Double> lastCost = new ArrayList<Double>();
     public double lastPAR = 0.0;
+
 
     public MultipleScheduler(String[] args){
 
@@ -25,7 +28,132 @@ public class MultipleScheduler {
         for(int i = 0; i < this.numOfHome ; i++){
             SingleScheduler temp = new SingleScheduler(args[i]);
             allHome.add(temp);
+            finalSol.add(temp);
         }
+    }
+
+    public void tryIt(){
+        for(int i=0;i<numOfHome;i++){
+            SingleScheduler temp = allHome.get(i);
+            temp.PSOAlgorithm();
+            allPowerUsage.add(i, temp.getPowerUsage());
+            lastCost.add(i, temp.xCost);
+        }
+        System.out.println("Cost " + lastCost);
+        System.out.println("PAR " + getPar(allPowerUsage));
+        System.out.println("One: " + allHome.get(0).getPowerUsage());
+        System.out.println("NExt: " + calOthers(1,allPowerUsage));
+
+        for(int i=0;i<numOfHome;i++) {
+            SingleScheduler temp = allHome.get(i);
+            temp.PSOAlgorithm(calOthers(i, allPowerUsage));
+            allPowerUsage.set(i, temp.getPowerUsage());
+        }
+
+
+    }
+
+    public void exec(){
+
+
+        for(int i=0;i<numOfHome;i++){
+            SingleScheduler temp = allHome.get(i);
+            temp.PSOAlgorithm();
+            allPowerUsage.add(temp.getPowerUsage());
+            lastCost.add(temp.xCost);
+        }
+        System.out.println("\n===============");
+        System.out.println("PAR is  " + getPar(allPowerUsage));
+        System.out.println("===============\n");
+        lastPAR = getPar(allPowerUsage);
+
+        int steps = 0;
+        double minPAR = lastPAR;
+        double curPAR = 0;
+        ArrayList<Double> finalCost = new ArrayList<Double>();
+
+        while(steps++ < 50){
+            ArrayList<Double> curCost = new ArrayList<Double>();
+            List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
+            for(int i=0;i<numOfHome;i++){
+                SingleScheduler temp = allHome.get(i);
+                temp.PSOAlgorithm(calOthers(i, allPowerUsage));
+               // temp.printSolution(temp.gBest);
+                allPowerUsage.set(i, temp.getPowerUsage());
+                finalPowerUsage.add(temp.getPowerUsage());
+
+                curCost.add(temp.getCost());
+                finalCost.add(temp.getCost());
+                curStratgy.add(temp.getAllSchedule());
+                finalStratgy.add(temp.getAllSchedule());
+            }
+            curPAR = getPar(allPowerUsage);
+            //System.out.println("======= " + steps + " ==========");
+            if(curPAR < minPAR && checkCost(lastCost, curCost, 1.5) ){
+            //if(curPAR < minPAR){
+                //System.out.println("ddd");
+                minPAR = curPAR;
+                for(int i=0;i<numOfHome;i++) {
+                    finalSol.set(i,allHome.get(i));
+                    finalCost.set(i, curCost.get(i));
+                    finalStratgy.set(i, curStratgy.get(i));
+                    finalPowerUsage.set(i, allPowerUsage.get(i));
+                   // System.out.println("PAR is  " + curPAR);
+                    //System.out.println("minPAR is  " + getPar(finalPowerUsage));
+                }
+            }
+            finalPowerUsage.clear();
+        }
+        System.out.println("--------------END---------------");
+
+        for(int i = 0;i<numOfHome;i++){
+            //allPowerUsage.set(i, finalSol.get(i).getPowerUsage());
+            //finalSol.get(i).printSchedule(finalSol.get(i).gBest);
+            //finalSol.get(i).printSolution(finalSol.get(i).gBest);
+            //finalSol.get(i).printBestResult(finalSol.get(i).gBest);
+            System.out.println("Strategy:  ");
+            Set<Integer> allTime = finalStratgy.get(i).keySet();
+            ArrayList<Integer> allTimeList = new ArrayList<Integer>();
+            allTimeList.addAll(allTime);
+            Collections.sort(allTimeList);
+
+            for (int time : allTimeList) {
+                ArrayList<ActivityNode> allActivity = finalStratgy.get(i).get(time);
+                System.out.print(time + ":00~" + (time+1) + ":00");
+                System.out.print("	");
+                List<String> tempList = new ArrayList<>();
+                for (ActivityNode actNode : allActivity) {
+                    System.out.print(actNode.getName() + ",");
+                    tempList.add(actNode.getName());
+                }
+                System.out.println();
+            }
+
+            System.out.println("\nCost is " + finalCost.get(i));
+            System.out.println("==================");
+        }
+        System.out.println("\n===============");
+        System.out.println("PAR is  " + minPAR);
+        //System.out.println("allPAR is  " + getPar(finalPowerUsage));
+        System.out.println("===============\n");
+
+
+    }
+
+    public boolean checkCost(ArrayList<Double> lastCost, ArrayList<Double> curCost, double interest){
+        boolean flag = true;
+        for(int i=0;i<numOfHome;i++){
+
+            double lC = lastCost.get(i) * interest;
+            double cC = curCost.get(i);
+            System.out.println(lC + " | " + cC);
+            if(cC > lC){
+                flag = false;
+                return flag;
+            }else continue;
+        }
+
+        return flag;
     }
 
     // The entrance of all program.

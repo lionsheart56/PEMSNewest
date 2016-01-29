@@ -22,6 +22,7 @@ public class MultiScheduler {
 
         MultipleScheduler instance = new MultipleScheduler(args);
         //System.out.println(args.length);
-        instance.run();
+        instance.exec();
+        //instance.tryIt();
     }
 }
