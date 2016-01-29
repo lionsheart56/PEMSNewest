@@ -89,8 +89,8 @@ public class MultipleScheduler {
             }
             curPAR = getPar(allPowerUsage);
             //System.out.println("======= " + steps + " ==========");
-            if(curPAR < minPAR && checkCost(lastCost, curCost, 1.5) ){
-            //if(curPAR < minPAR){
+            //if(curPAR < minPAR && checkCost(lastCost, curCost, 1.5) ){
+            if(curPAR < minPAR){
                 //System.out.println("ddd");
                 minPAR = curPAR;
                 for(int i=0;i<numOfHome;i++) {
@@ -146,7 +146,7 @@ public class MultipleScheduler {
 
             double lC = lastCost.get(i) * interest;
             double cC = curCost.get(i);
-            System.out.println(lC + " | " + cC);
+//            System.out.println(lC + " | " + cC);
             if(cC > lC){
                 flag = false;
                 return flag;
@@ -237,7 +237,7 @@ public class MultipleScheduler {
     }
 
     public boolean isAccept(Double e, Double k){
-        System.out.println(e + " | " + k);
+       // System.out.println(e + " | " + k);
         if (k - e < 0.5) return true;
         else return false;
     }
