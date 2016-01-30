@@ -56,7 +56,7 @@ public class MultipleScheduler {
 
     public void exec(){
 
-        //System.out.println("------- Consider about cost, to reduce PAR -------");
+       // System.out.println("------- Consider about cost, to reduce PAR -------");
         System.out.println("------- Do not consider cost, just reduce PAR -------");
         ArrayList<Double> curCost = new ArrayList<Double>();
         ArrayList<Double> finalCost = new ArrayList<Double>();
