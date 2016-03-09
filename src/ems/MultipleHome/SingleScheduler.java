@@ -21,6 +21,7 @@ public class SingleScheduler {
     public double tempCost = 0.0;
     public double electricityCost = 0.0;
     public double xCost = 0.0;
+    public double maxPower = 0.0;
     /* Information from _input_data */
     private ArrayList<ActivityNode> schedulableActivity = new ArrayList<ActivityNode>();
     private ArrayList<ActivityNode> nonSchedulableActivity = new ArrayList<ActivityNode>();
@@ -826,6 +827,7 @@ public class SingleScheduler {
         }
         Avg = Avg / 24.0;
         PAR = MAX / Avg;
+        this.maxPower = MAX;
         return PAR;
     }
 

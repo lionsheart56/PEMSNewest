@@ -20,6 +20,7 @@ public class MultipleScheduler {
     public List<ArrayList<Double>> finalPowerUsage = new ArrayList<ArrayList<Double>>();
     public ArrayList<Double> lastCost = new ArrayList<Double>();
     public double lastPAR = 0.0;
+    public double maxPower = 0.0;
 
 
     public MultipleScheduler(String[] args){
@@ -56,8 +57,8 @@ public class MultipleScheduler {
 
     public void exec(){
 
-       // System.out.println("------- Consider about cost, to reduce PAR -------");
-        System.out.println("------- Do not consider cost, just reduce PAR -------");
+        System.out.println("------- Consider about cost, to reduce PAR -------");
+        //System.out.println("------- Do not consider cost, just reduce PAR -------");
         ArrayList<Double> curCost = new ArrayList<Double>();
         ArrayList<Double> finalCost = new ArrayList<Double>();
         List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
@@ -76,13 +77,13 @@ public class MultipleScheduler {
         System.out.println("PAR is  " + getPar(allPowerUsage));
         System.out.println("===============\n");
         lastPAR = getPar(allPowerUsage);
-
+        System.out.println("MaxPower : " + this.maxPower);
         long startTime = Calendar.getInstance().getTimeInMillis();
 
         int steps = 0;
         double minPAR = lastPAR;
         double curPAR = 0;
-
+        double lastPower = this.maxPower;
 
         while(steps++ < 50){
 
@@ -96,9 +97,9 @@ public class MultipleScheduler {
             }
             curPAR = getPar(allPowerUsage);
             //System.out.println("======= " + steps + " ==========");
-            //if(curPAR < minPAR && checkCost(lastCost, curCost, 1.5) ){
-            if(curPAR < minPAR){
-               // System.out.println("ddd");
+            if(curPAR < minPAR && checkCost(lastCost, curCost, 2) ){
+            //if(curPAR < minPAR){
+                System.out.println("ddd " + steps );
                 minPAR = curPAR;
                 for(int i=0;i<numOfHome;i++) {
                     finalSol.set(i,allHome.get(i));
@@ -144,7 +145,8 @@ public class MultipleScheduler {
         }
         System.out.println("\n===============");
         System.out.println("PAR is  " + minPAR);
-        //System.out.println("allPAR is  " + getPar(finalPowerUsage));
+        System.out.println("allPAR is  " + getPar(finalPowerUsage));
+        System.out.println("MaxPower is " + this.maxPower);
         System.out.println("===============");
         System.out.println("Second:" + duration/1000);
         System.out.println("Minute:" + duration/60000);
@@ -270,6 +272,7 @@ public class MultipleScheduler {
         }
         Avg = Avg / 24.0;
         PAR = MAX / Avg;
+        this.maxPower = MAX;
         return PAR;
     }
 

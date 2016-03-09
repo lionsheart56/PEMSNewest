@@ -34,11 +34,11 @@
       <periodList>
         <period id="1">
           <startTime>00:00</startTime>
-          <endTime>1:00</endTime>
+          <endTime>23:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
-      <schedulable>false</schedulable>
+      <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">WashingMachine</appliance>
       </applianceList>
@@ -107,12 +107,12 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>06:00</startTime>
+          <startTime>05:00</startTime>
           <endTime>07:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
-      <schedulable>false</schedulable>
+      <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">TV</appliance>
         <appliance id="2">Light</appliance>
@@ -140,11 +140,11 @@
       <periodList>
         <period id="1">
           <startTime>07:00</startTime>
-          <endTime>08:00</endTime>
+          <endTime>010:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
-      <schedulable>false</schedulable>
+      <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">TV</appliance>
         <appliance id="2">Fan</appliance>
@@ -189,12 +189,12 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>10:00</startTime>
-          <endTime>11:00</endTime>
+          <startTime>7:00</startTime>
+          <endTime>18:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
-      <schedulable>false</schedulable>
+      <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">TV</appliance>
         <appliance id="2">XBOX</appliance>
@@ -208,12 +208,12 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>09:00</startTime>
-          <endTime>10:00</endTime>
+          <startTime>07:00</startTime>
+          <endTime>12:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
-      <schedulable>false</schedulable>
+      <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">Fan</appliance>
         <appliance id="2">Air-conditioner</appliance>
@@ -261,12 +261,12 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>09:00</startTime>
-          <endTime>12:00</endTime>
+          <startTime>08:00</startTime>
+          <endTime>15:00</endTime>
         </period>
       </periodList>
       <duration>180</duration>
-      <schedulable>false</schedulable>
+      <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">Fan</appliance>
         <appliance id="2">Air-conditioner</appliance>
