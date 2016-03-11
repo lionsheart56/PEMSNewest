@@ -97,8 +97,8 @@ public class MultipleScheduler {
             }
             curPAR = getPar(allPowerUsage);
             //System.out.println("======= " + steps + " ==========");
-            if(curPAR < minPAR && checkCost(lastCost, curCost, 2) ){
-            //if(curPAR < minPAR){
+            //if(curPAR < minPAR && checkCost(lastCost, curCost, 2) ){
+            if(curPAR < minPAR){
                 System.out.println("ddd " + steps );
                 minPAR = curPAR;
                 for(int i=0;i<numOfHome;i++) {
@@ -148,6 +148,8 @@ public class MultipleScheduler {
         System.out.println("allPAR is  " + getPar(finalPowerUsage));
         System.out.println("MaxPower is " + this.maxPower);
         System.out.println("===============");
+        System.out.println("MillSecond:" + duration);
+        System.out.println("0.Second:" + duration/100);
         System.out.println("Second:" + duration/1000);
         System.out.println("Minute:" + duration/60000);
 
