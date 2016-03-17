@@ -5,8 +5,8 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>13:00</startTime>
+          <endTime>17:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -18,7 +18,7 @@
     <times id="2">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
+          <startTime>19:00</startTime>
           <endTime>23:00</endTime>
         </period>
       </periodList>
@@ -63,8 +63,8 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>09:00</startTime>
+          <endTime>12:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -84,8 +84,8 @@
     <times id="2">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>16:00</startTime>
+          <endTime>18:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -107,8 +107,8 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>06:00</startTime>
+          <endTime>08:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -122,8 +122,8 @@
     <times id="2">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>10:00</startTime>
+          <endTime>12:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -139,8 +139,8 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>07:00</startTime>
+          <endTime>09:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -155,8 +155,8 @@
     <times id="2">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>11:00</startTime>
+          <endTime>13:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -171,8 +171,8 @@
     <times id="3">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>18:00</startTime>
+          <endTime>22:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -189,8 +189,8 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>14:00</startTime>
+          <endTime>17:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -208,8 +208,8 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>09:00</startTime>
+          <endTime>12:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -225,8 +225,8 @@
     <times id="2">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>14:00</startTime>
+          <endTime>16:00</endTime>
         </period>
       </periodList>
       <duration>60</duration>
@@ -242,8 +242,8 @@
     <times id="3">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>13:00</startTime>
+          <endTime>18:00</endTime>
         </period>
       </periodList>
       <duration>180</duration>
@@ -261,8 +261,8 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>09:00</startTime>
+          <endTime>12:00</endTime>
         </period>
       </periodList>
       <duration>180</duration>
@@ -279,8 +279,8 @@
     <times id="2">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>14:00</startTime>
+          <endTime>17:00</endTime>
         </period>
       </periodList>
       <duration>120</duration>
@@ -299,11 +299,11 @@
     <times id="1">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>19:00</startTime>
+          <endTime>22:00</endTime>
         </period>
       </periodList>
-      <duration>60</duration>
+      <duration>120</duration>
       <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">TV</appliance>
@@ -318,11 +318,11 @@
     <times id="2">
       <periodList>
         <period id="1">
-          <startTime>00:00</startTime>
-          <endTime>23:00</endTime>
+          <startTime>09:00</startTime>
+          <endTime>12:00</endTime>
         </period>
       </periodList>
-      <duration>120</duration>
+      <duration>60</duration>
       <schedulable>true</schedulable>
       <applianceList>
         <appliance id="1">TV</appliance>
