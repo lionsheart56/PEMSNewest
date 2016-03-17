@@ -14,8 +14,7 @@ public class MultipleScheduler {
     private int numOfHome = 0;
     public List<HashMap<Integer, ArrayList<ActivityNode>>> lastStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
     ArrayList<SingleScheduler> finalSol = new ArrayList<SingleScheduler>();
-    public List<HashMap<Integer, ArrayList<ActivityNode>>> finalStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
-    //Use to store the strategy of each house.
+    public List<HashMap<Integer, ArrayList<ActivityNode>>> finalStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();  //Use to store the strategy of each house.
     public List<ArrayList<Double>> allPowerUsage = new ArrayList<ArrayList<Double>>();
     public List<ArrayList<Double>> finalPowerUsage = new ArrayList<ArrayList<Double>>();
     public ArrayList<Double> lastCost = new ArrayList<Double>();
@@ -97,8 +96,8 @@ public class MultipleScheduler {
             }
             curPAR = getPar(allPowerUsage);
             //System.out.println("======= " + steps + " ==========");
-            //if(curPAR < minPAR && checkCost(lastCost, curCost, 2) ){
-            if(curPAR < minPAR){
+            if(curPAR < minPAR && checkCost(lastCost, curCost, 2) ){
+            //if(curPAR < minPAR){
                 System.out.println("ddd " + steps );
                 minPAR = curPAR;
                 for(int i=0;i<numOfHome;i++) {

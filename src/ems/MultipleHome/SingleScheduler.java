@@ -730,6 +730,7 @@ public class SingleScheduler {
         double par = getPar(this.getPowerUsage(), other);
         tempCost = electricityCost;
         return par;
+        //return electricityCost;
     }
 
     private double particleEval(HybridParticle particle, ArrayList<Double> other, int index) {
@@ -814,6 +815,7 @@ public class SingleScheduler {
         double par = getPar(this.getPowerUsage(index), other);
 
         return par;
+        //return electricityCost;
     }
 
     public double getPar(ArrayList<Double> own, ArrayList<Double> other){
