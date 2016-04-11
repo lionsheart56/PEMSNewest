@@ -71,6 +71,7 @@ public class MultipleScheduler {
             finalCost.add(temp.getCost());
             curStratgy.add(temp.getAllSchedule());
             finalStratgy.add(temp.getAllSchedule());
+            
         }
         System.out.println("\n===============");
         System.out.println("PAR is  " + getPar(allPowerUsage));
@@ -105,8 +106,6 @@ public class MultipleScheduler {
                     finalCost.set(i, curCost.get(i));
                     finalStratgy.set(i, curStratgy.get(i));
                     finalPowerUsage.set(i, allPowerUsage.get(i));
-                   // System.out.println("PAR is  " + curPAR);
-                    //System.out.println("minPAR is  " + getPar(finalPowerUsage));
                 }
             }
             //finalPowerUsage.clear();
@@ -117,10 +116,7 @@ public class MultipleScheduler {
         System.out.println("--------------END---------------");
 
         for(int i = 0;i<numOfHome;i++){
-            //allPowerUsage.set(i, finalSol.get(i).getPowerUsage());
-            //finalSol.get(i).printSchedule(finalSol.get(i).gBest);
-            //finalSol.get(i).printSolution(finalSol.get(i).gBest);
-            //finalSol.get(i).printBestResult(finalSol.get(i).gBest);
+
             System.out.println("Strategy:  ");
             Set<Integer> allTime = finalStratgy.get(i).keySet();
             ArrayList<Integer> allTimeList = new ArrayList<Integer>();
