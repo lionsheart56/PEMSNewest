@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schedule>
+  <activity id="Sleeping">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>22:00</startTime>
+          <endTime>23:00</endTime>
+        </period>
+      </periodList>
+      <duration>60</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">NightLamp</appliance>
+      </applianceList>
+    </times>
+    <times id="2">
+      <periodList>
+        <period id="1">
+          <startTime>00:00</startTime>
+          <endTime>07:00</endTime>
+        </period>
+      </periodList>
+      <duration>420</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">NightLamp</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="Cooking">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>04:00</startTime>
+          <endTime>05:00</endTime>
+        </period>
+      </periodList>
+      <duration>60</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">XBOX</appliance>
+        <appliance id="2">WaterColdFan</appliance>
+        <appliance id="3">Air-conditioner</appliance>
+        <appliance id="4">DishWasher</appliance>
+        <appliance id="5">RiceCooker</appliance>
+        <appliance id="6">Microwave</appliance>
+        <appliance id="7">RangeHood</appliance>
+      </applianceList>
+    </times>
+    <times id="2">
+      <periodList>
+        <period id="1">
+          <startTime>13:00</startTime>
+          <endTime>16:00</endTime>
+        </period>
+      </periodList>
+      <duration>60</duration>
+      <schedulable>true</schedulable>
+      <applianceList>
+        <appliance id="1">WaterColdFan</appliance>
+        <appliance id="2">PC</appliance>
+        <appliance id="3">Oven</appliance>
+        <appliance id="4">Microwave</appliance>
+        <appliance id="5">RangeHood</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="WatchingTV">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>01:00</startTime>
+          <endTime>06:00</endTime>
+        </period>
+        <period id="2">
+          <startTime>18:00</startTime>
+          <endTime>20:00</endTime>
+        </period>
+      </periodList>
+      <duration>60</duration>
+      <schedulable>true</schedulable>
+      <applianceList>
+        <appliance id="1">TV</appliance>
+        <appliance id="2">WaterColdFan</appliance>
+        <appliance id="3">Light</appliance>
+        <appliance id="4">Lamp</appliance>
+        <appliance id="5">Microwave</appliance>
+        <appliance id="6">CoffeeMaker</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="UsingPC">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>11:00</startTime>
+          <endTime>16:00</endTime>
+        </period>
+      </periodList>
+      <duration>120</duration>
+      <schedulable>true</schedulable>
+      <applianceList>
+        <appliance id="1">Radio</appliance>
+        <appliance id="2">Light</appliance>
+        <appliance id="3">Lamp</appliance>
+        <appliance id="4">PC</appliance>
+        <appliance id="5">Laptop</appliance>
+        <appliance id="6">DishWasher</appliance>
+        <appliance id="7">RiceCooker</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="Laundry">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>06:00</startTime>
+          <endTime>09:00</endTime>
+        </period>
+      </periodList>
+      <duration>120</duration>
+      <schedulable>true</schedulable>
+      <applianceList>
+        <appliance id="1">Fan</appliance>
+        <appliance id="2">NightLamp</appliance>
+        <appliance id="3">WashingMachine</appliance>
+        <appliance id="4">RangeHood</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="MakingCoffee">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>04:00</startTime>
+          <endTime>06:00</endTime>
+        </period>
+      </periodList>
+      <duration>120</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">TV</appliance>
+        <appliance id="2">XBOX</appliance>
+        <appliance id="3">Lamp</appliance>
+        <appliance id="4">DishWasher</appliance>
+        <appliance id="5">Oven</appliance>
+        <appliance id="6">CoffeeMaker</appliance>
+      </applianceList>
+    </times>
+  </activity>
+</schedule>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schedule>
+  <activity id="Sleeping">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>21:00</startTime>
+          <endTime>23:00</endTime>
+        </period>
+      </periodList>
+      <duration>120</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">NightLamp</appliance>
+      </applianceList>
+    </times>
+    <times id="2">
+      <periodList>
+        <period id="1">
+          <startTime>00:00</startTime>
+          <endTime>04:00</endTime>
+        </period>
+      </periodList>
+      <duration>240</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">NightLamp</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="Cooking">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>20:00</startTime>
+          <endTime>23:00</endTime>
+        </period>
+      </periodList>
+      <duration>60</duration>
+      <schedulable>true</schedulable>
+      <applianceList>
+        <appliance id="1">Lamp</appliance>
+        <appliance id="2">DishWasher</appliance>
+        <appliance id="3">Oven</appliance>
+        <appliance id="4">Microwave</appliance>
+        <appliance id="5">RangeHood</appliance>
+        <appliance id="6">VacuumCleaner</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="PlayingXBOX">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>18:00</startTime>
+          <endTime>19:00</endTime>
+        </period>
+      </periodList>
+      <duration>60</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">XBOX</appliance>
+        <appliance id="2">Air-conditioner</appliance>
+        <appliance id="3">Light</appliance>
+        <appliance id="4">PC</appliance>
+        <appliance id="5">TumbleDryer</appliance>
+        <appliance id="6">RiceCooker</appliance>
+        <appliance id="7">Microwave</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="UsingLaptop">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>12:00</startTime>
+          <endTime>14:00</endTime>
+        </period>
+      </periodList>
+      <duration>120</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">Air-conditioner</appliance>
+        <appliance id="2">Light</appliance>
+        <appliance id="3">PC</appliance>
+        <appliance id="4">Laptop</appliance>
+        <appliance id="5">WashingMachine</appliance>
+        <appliance id="6">TumbleDryer</appliance>
+        <appliance id="7">VacuumCleaner</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="Laundry">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>00:00</startTime>
+          <endTime>03:00</endTime>
+        </period>
+        <period id="2">
+          <startTime>11:00</startTime>
+          <endTime>16:00</endTime>
+        </period>
+        <period id="3">
+          <startTime>17:00</startTime>
+          <endTime>23:00</endTime>
+        </period>
+      </periodList>
+      <duration>120</duration>
+      <schedulable>true</schedulable>
+      <applianceList>
+        <appliance id="1">XBOX</appliance>
+        <appliance id="2">PC</appliance>
+        <appliance id="3">WashingMachine</appliance>
+        <appliance id="4">Oven</appliance>
+      </applianceList>
+    </times>
+  </activity>
+  <activity id="Cleaning">
+    <times id="1">
+      <periodList>
+        <period id="1">
+          <startTime>13:00</startTime>
+          <endTime>14:00</endTime>
+        </period>
+      </periodList>
+      <duration>60</duration>
+      <schedulable>false</schedulable>
+      <applianceList>
+        <appliance id="1">Light</appliance>
+        <appliance id="2">Microwave</appliance>
+        <appliance id="3">VacuumCleaner</appliance>
+      </applianceList>
+    </times>
+  </activity>
+</schedule>
