@@ -78,7 +78,6 @@ public class HybridScheduler {
 		int epoch = 0;
 		boolean done = false;
 		int limitCount = 0;
-		int nowepoch = 0;
 
 		initialize();
 		while (!done) {
@@ -101,25 +100,14 @@ public class HybridScheduler {
 				if (currentGBestFitness < historyGBestFitness) {
 					historyGBestIndex = currentGBestIndex;
 				}
-				
-				
 				// Update velocity for each particle
 				setVelocity(historyGBestIndex);
-				
 				// Update particle according to its velocity
 				updateParticle();
-				
-				// Debug print out
-				//System.out.println("Schedule epoch number: " + epoch);
-				//printBestResult(historyGBestIndex);
-				//printSolutoin(historyGBestIndex);
-				//System.out.println("=========================================");
-				
 				epoch++;
 				if(limitCount > 20) break;
 			} else {
 				done = true;
-				//nowepoch = epoch;
 			}
 		}
 		long endTime = Calendar.getInstance().getTimeInMillis();
@@ -127,16 +115,14 @@ public class HybridScheduler {
 
 		printSchedule(historyGBestIndex);
 		printSolution(historyGBestIndex);
-		//System.out.println("At epoch: "+ nowepoch);
 		System.out.println("Second:" + duration/1000);
 		System.out.println("Minute:" + duration/60000);
-		//System.out.println(this.getAllSchedule());
 	}
 	
 	public HashMap<Integer, ArrayList<ActivityNode>> getAllSchedule(){
 		return this.allSchedule;
 	}
-	//Problem here
+
 	public void setRenew(int interruptTime, String interruptAct){
 
 		this.schedulableActivity.removeAll(this.schedulableActivity);
@@ -144,10 +130,7 @@ public class HybridScheduler {
 
 		HashMap<Integer, List<String>> tempSchedule = this.getSchedule();
 		HashMap<Integer, ArrayList<ActivityNode>> allSchedule = this.getAllSchedule();
-		//for(ActivityNode oAct : allAct) {
-		//	System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
-		//}
-		//System.out.println("====================");
+
 		Set<Integer> allTime = tempSchedule.keySet();
 		ArrayList<Integer> allTimeList = new ArrayList<Integer>();
 		allTimeList.addAll(allTime);
@@ -155,7 +138,6 @@ public class HybridScheduler {
 		int step = 0;
 		for(int i=0;i<24;i++){
 			if(allTimeList.contains(i)){
-				//System.out.println(i);
 				int time = allTimeList.get(step);
 				step++;
 				ArrayList<ActivityNode> tempAct = allSchedule.get(time);   // In this time, original schedule activity.
@@ -202,10 +184,6 @@ public class HybridScheduler {
 				}
 			}
 		}
-		//for(ActivityNode oAct : allAct) {
-		//		System.out.println(oAct.getName() + " " + oAct.getID() + " [" + oAct.getStartTime() + "=" + oAct.getEndTime() + "] " + oAct.getSchedulability() + " " + oAct.getRenew());
-		//	}
-		//	System.out.println("====================");
 
 		for(ActivityNode actNode : allAct){
 			boolean schedulability = actNode.getSchedulability();
@@ -243,8 +221,7 @@ public class HybridScheduler {
 			
 			// Set allSchedule
 			setScheduledList(newParticle.getScheduleData());
-			
-			
+
 			ArrayList<Double> currentPowerConsumption = new ArrayList<Double>();
 			currentPowerConsumption.clear();
 			double totalPowerConsumption = 0.0;
@@ -288,8 +265,7 @@ public class HybridScheduler {
 			for (int j = 0; j < TIME_SLOTS; j++) {
 				totalPowerConsumption -= solarPowerProfile.get(j);
 			}
-			
-			
+
 			// Reset battery power
 			for (int j = 0; j < TIME_SLOTS; j++) {
 				batteryPower.set(j, 0.0);
@@ -505,7 +481,6 @@ public class HybridScheduler {
 	}
 
 	/* Move particle and check feasibility and update pBest if necessary */
-	/* Prolbem Here */
 	private void updateParticle() {
 		int numOfSchedulableAct = schedulableActivity.size();
 		for (int i = 0; i < MAX_PARTICLES; i++) {
@@ -526,7 +501,7 @@ public class HybridScheduler {
 				int preferEnd = actNode.getEndTime();
 				int preferDuration = actNode.getDuration();
 				int deadline = preferEnd - preferDuration;
-				if(deadline < preferStart) System.out.println("Fuck you");
+
 				if(newStartTime > deadline){
 					currentParticle.setScheduleData(j, deadline);
 				}else if(newStartTime < preferStart){
@@ -823,9 +798,7 @@ public class HybridScheduler {
 		for (int i = 0; i < numOfNonSchedulableAct; i++) {
 			// For each actNode, we get start time/duration
 			ActivityNode actNode = nonSchedulableActivity.get(i);
-			//HashMap<Integer, Integer> startEndTime = actNode.getStartEndTime();
-			//Set<Integer> startTimeSet = startEndTime.keySet();
-			//ArrayList<Integer> startTimeList = new ArrayList<Integer>(startTimeSet);
+
 			int startTime = actNode.getStartTime();
 			int duration = actNode.getDuration();
 			

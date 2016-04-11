@@ -5,21 +5,22 @@ package ems.MultipleHome;
  */
 
 import java.util.*;
+import java.text.*;
 
 import ems.datastructure.ActivityNode;
 
 
 public class MultipleScheduler {
     public ArrayList<SingleScheduler> allHome = new ArrayList<SingleScheduler>();
-    private int numOfHome = 0;
-    public List<HashMap<Integer, ArrayList<ActivityNode>>> lastStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
-    ArrayList<SingleScheduler> finalSol = new ArrayList<SingleScheduler>();
+    public ArrayList<SingleScheduler> finalSol = new ArrayList<SingleScheduler>();
     public List<HashMap<Integer, ArrayList<ActivityNode>>> finalStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();  //Use to store the strategy of each house.
     public List<ArrayList<Double>> allPowerUsage = new ArrayList<ArrayList<Double>>();
     public List<ArrayList<Double>> finalPowerUsage = new ArrayList<ArrayList<Double>>();
     public ArrayList<Double> lastCost = new ArrayList<Double>();
     public double lastPAR = 0.0;
     public double maxPower = 0.0;
+
+    private int numOfHome = 0;
 
 
     public MultipleScheduler(String[] args){
@@ -32,32 +33,12 @@ public class MultipleScheduler {
         }
     }
 
-    public void tryIt(){
-        for(int i=0;i<numOfHome;i++){
-            SingleScheduler temp = allHome.get(i);
-            temp.PSOAlgorithm();
-            allPowerUsage.add(i, temp.getPowerUsage());
-            lastCost.add(i, temp.xCost);
-
-        }
-        System.out.println("Cost " + lastCost);
-        System.out.println("PAR " + getPar(allPowerUsage));
-        System.out.println("One: " + allHome.get(0).getPowerUsage());
-        System.out.println("NExt: " + calOthers(1,allPowerUsage));
-
-        for(int i=0;i<numOfHome;i++) {
-            SingleScheduler temp = allHome.get(i);
-            temp.PSOAlgorithm(calOthers(i, allPowerUsage));
-            allPowerUsage.set(i, temp.getPowerUsage());
-        }
-
-
-    }
-
     public void exec(){
 
-        System.out.println("------- Consider about cost, to reduce PAR -------");
-        //System.out.println("------- Do not consider cost, just reduce PAR -------");
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(3);
+
+        System.out.println(" ===== Wait for Individual Optimization ======");
         ArrayList<Double> curCost = new ArrayList<Double>();
         ArrayList<Double> finalCost = new ArrayList<Double>();
         List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
@@ -68,59 +49,68 @@ public class MultipleScheduler {
             finalPowerUsage.add(temp.getPowerUsage());
             lastCost.add(temp.xCost);
             curCost.add(temp.getCost());
-            finalCost.add(temp.getCost());
+            finalCost.add(temp.xCost);
             curStratgy.add(temp.getAllSchedule());
             finalStratgy.add(temp.getAllSchedule());
         }
-        System.out.println("\n===============");
-        System.out.println("PAR is  " + getPar(allPowerUsage));
-        System.out.println("===============\n");
-        lastPAR = getPar(allPowerUsage);
-        System.out.println("MaxPower : " + this.maxPower);
-        long startTime = Calendar.getInstance().getTimeInMillis();
 
+        lastPAR = getPar(allPowerUsage);
+        System.out.println("\n===== Individual Optimization Finish ======");
+        System.out.println("Now Peak-to-Average Ratio : " + nf.format(lastPAR));
+        System.out.println("Now Peak Power : " + nf.format(maxPower));
+        System.out.println("\n===== Cooperative Game Start ======");
+        long startTime = Calendar.getInstance().getTimeInMillis();
         int steps = 0;
         double minPAR = lastPAR;
-        double curPAR = 0;
-        double lastPower = this.maxPower;
+        double curPAR = 0.0;
+        double newPAR = 0.0;
+        double lastPower = maxPower;
+        boolean change = true;
+        int maxEpoch = 50;
+        int iteration = 1;
+        double rate = 1.4;
+        double oldCost = calCost(lastCost, lastPower);
 
-        while(steps++ < 50){
+        while(change && iteration < 6) {
+            System.out.println("Iteration : " + iteration++);
+            while (steps++ < maxEpoch) {
 
-            for(int i=0;i<numOfHome;i++){
-                SingleScheduler temp = allHome.get(i);
-                temp.PSOAlgorithm(calOthers(i, allPowerUsage));
-               // temp.printSolution(temp.gBest);
-                allPowerUsage.set(i, temp.getPowerUsage());
-                curCost.set(i,temp.getCost());
-                curStratgy.set(i,temp.getAllSchedule());
-            }
-            curPAR = getPar(allPowerUsage);
-            //System.out.println("======= " + steps + " ==========");
-            if(curPAR < minPAR && checkCost(lastCost, curCost, 2) ){
-            //if(curPAR < minPAR){
-                System.out.println("ddd " + steps );
-                minPAR = curPAR;
-                for(int i=0;i<numOfHome;i++) {
-                    finalSol.set(i,allHome.get(i));
-                    finalCost.set(i, curCost.get(i));
-                    finalStratgy.set(i, curStratgy.get(i));
-                    finalPowerUsage.set(i, allPowerUsage.get(i));
-                   // System.out.println("PAR is  " + curPAR);
-                    //System.out.println("minPAR is  " + getPar(finalPowerUsage));
+                for (int i = 0; i < numOfHome; i++) {
+                    SingleScheduler temp = allHome.get(i);
+                    temp.PSOAlgorithm(calOthers(i, allPowerUsage));
+                    allPowerUsage.set(i, temp.getPowerUsage());
+                    curCost.set(i, temp.getCost());
+                    curStratgy.set(i, temp.getAllSchedule());
+                }
+                curPAR = getPar(allPowerUsage);
+                if (curPAR < minPAR && checkCost(lastCost, curCost, rate)) {
+                    minPAR = curPAR;
+                    for (int i = 0; i < numOfHome; i++) {
+                        finalSol.set(i, allHome.get(i));
+                        finalCost.set(i, curCost.get(i));
+                        finalStratgy.set(i, curStratgy.get(i));
+                        finalPowerUsage.set(i, allPowerUsage.get(i));
+                    }
                 }
             }
-            //finalPowerUsage.clear();
+            newPAR = getPar(finalPowerUsage);
+            double newCost = calCost(finalCost, maxPower);
+            if(!isAccept(minPAR, lastPAR) || !checkTotalCost(oldCost, newCost)){
+                steps = 0;
+                //maxEpoch +=10;
+                rate += 0.15;
+                System.out.println("Not Accept: [ "+ minPAR+ " ] " + "[ " + lastPAR +" ]");
+                System.out.println("Now Rate : " + rate);
+            }else{
+                change = false;
+            }
         }
         long endTime = Calendar.getInstance().getTimeInMillis();
         long duration = endTime - startTime;
 
-        System.out.println("--------------END---------------");
+        System.out.println("===== Cooperative Game Finish ======");
 
         for(int i = 0;i<numOfHome;i++){
-            //allPowerUsage.set(i, finalSol.get(i).getPowerUsage());
-            //finalSol.get(i).printSchedule(finalSol.get(i).gBest);
-            //finalSol.get(i).printSolution(finalSol.get(i).gBest);
-            //finalSol.get(i).printBestResult(finalSol.get(i).gBest);
             System.out.println("Strategy:  ");
             Set<Integer> allTime = finalStratgy.get(i).keySet();
             ArrayList<Integer> allTimeList = new ArrayList<Integer>();
@@ -131,28 +121,46 @@ public class MultipleScheduler {
                 ArrayList<ActivityNode> allActivity = finalStratgy.get(i).get(time);
                 System.out.print(time + ":00~" + (time+1) + ":00");
                 System.out.print("	");
-                List<String> tempList = new ArrayList<>();
+               // List<String> tempList = new ArrayList<>();
                 for (ActivityNode actNode : allActivity) {
                     System.out.print(actNode.getName() + ",");
-                    tempList.add(actNode.getName());
+                    //tempList.add(actNode.getName());
                 }
                 System.out.println();
             }
-
-            System.out.println("\nCost is " + finalCost.get(i));
+            System.out.println("\nElectricity Cost : " + finalCost.get(i));
             System.out.println("==================");
         }
-        System.out.println("\n===============");
-        System.out.println("PAR is  " + minPAR);
-        System.out.println("allPAR is  " + getPar(finalPowerUsage));
-        System.out.println("MaxPower is " + this.maxPower);
-        System.out.println("===============");
-        System.out.println("MillSecond:" + duration);
-        System.out.println("0.Second:" + duration/100);
-        System.out.println("Second:" + duration/1000);
-        System.out.println("Minute:" + duration/60000);
 
 
+        System.out.println("\n========== Final Results ========");
+        System.out.println("Old Peak-to-Average Ratio : " + nf.format(lastPAR));
+        System.out.println("New Peak-to-Average Ratio : " + nf.format(getPar(finalPowerUsage)));
+        System.out.println("Old Peak Power : " + nf.format(lastPower));
+        System.out.println("New Peak Power : " + nf.format(maxPower));
+        System.out.println("Old Total Cost per Day : " + nf.format(calCost(lastCost, lastPower)));
+        System.out.println("New Total Cost per Day : " + nf.format(calCost(finalCost, maxPower)));
+        System.out.println("\n======= Computation Time ========");
+        System.out.println("Second:" + nf.format(duration/1000.0));
+        System.out.println("Minute:" + nf.format(duration/60000.0));
+    }
+
+    private boolean checkTotalCost(double oldC, double newC){
+        if(newC >= oldC) return false;
+        else return true;
+    }
+
+    public double giveYouInteger(double power){
+        return Math.ceil(power);
+    }
+
+    public double calCost(ArrayList<Double> eCost, double peak){
+        double basicCharge = giveYouInteger(peak) * 236 / 30.0;
+        double sum = 0.0;
+        for(int i = 0; i < numOfHome ; i++){
+            sum += eCost.get(i);
+        }
+        return sum+basicCharge;
     }
 
     public boolean checkCost(ArrayList<Double> lastCost, ArrayList<Double> curCost, double interest){
@@ -171,89 +179,10 @@ public class MultipleScheduler {
         return flag;
     }
 
-    // The entrance of all program.
-    public void run(){
-
-        //System.out.println(lastStratgy.size());
-        // 1. Do single Optimization
-        for(int i=0;i<numOfHome;i++){
-            SingleScheduler temp = allHome.get(i);
-            temp.PSOAlgorithm();
-            lastStratgy.add(i, temp.getAllSchedule());
-            allPowerUsage.add(i, temp.getPowerUsage());
-            lastCost.add(i, temp.getCost());
-        }
-        //System.out.println(calOthers(0,allPowerUsage));
-        System.out.println("\n===============");
-        System.out.println("PAR is  " + getPar(allPowerUsage));
-        System.out.println("===============\n");
-        lastPAR = getPar(allPowerUsage);
-        // System.out.println(allPowerUsage.get(1));
-
-        boolean flag = false;
-        int count = 0;
-        int acceptCount = 0;
-        while(acceptCount < 10){
-            List<HashMap<Integer, ArrayList<ActivityNode>>> curStratgy = new ArrayList<HashMap<Integer, ArrayList<ActivityNode>>>();
-            ArrayList<Double> curCost = new ArrayList<Double>();
-            for(int i=0;i<numOfHome;i++){
-                SingleScheduler temp = allHome.get(i);
-                temp.PSOAlgorithm(calOthers(i, allPowerUsage));
-                allPowerUsage.set(i, temp.getPowerUsage());
-                curStratgy.add(i, temp.getAllSchedule());
-                curCost.add(i, temp.getCost());
-            }
-            double curPar = getPar(allPowerUsage);
-            if(Math.abs(curPar - lastPAR) < 0.7 || Math.abs(lastPAR - curPar) < 0.53 ){
-                System.out.println(curPar + " | " + lastPAR);
-                acceptCount++;
-            }else{
-              acceptCount = 0;
-            }
-            lastPAR = curPar;
-            /*
-            for(int i=0;i<lastCost.size();i++){
-                boolean temp = isAccept(lastCost.get(i), curCost.get(i));
-                if(temp == false){
-                    flag = false;
-                    acceptCount = 0;
-                    break;
-                }
-                flag = true;
-            }
-            if(flag == true){ System.out.println("Hi"); acceptCount++;}
-            */
-
-
-
-            for(int i=0;i<lastStratgy.size();i++){
-                lastStratgy.set(i,curStratgy.get(i));
-                lastCost.set(i,curCost.get(i));
-           //     allHome.get(i).printSchedule(allHome.get(i).gBest);
-             //   allHome.get(i).print();
-            }
-
-            System.out.println("======= " + count + " ==========");
-            System.out.println("PAR is  " + getPar(allPowerUsage));
-            count ++;
-
-        }
-        for(int i = 0;i<numOfHome;i++){
-            allHome.get(i).printSchedule(allHome.get(i).gBest);
-            allHome.get(i).print();
-            System.out.println("==================");
-        }
-        System.out.println("\n===============");
-        System.out.println("PAR is  " + getPar(allPowerUsage));
-        System.out.println("===============\n");
-
-
-
-    }
-
     public boolean isAccept(Double e, Double k){
        // System.out.println(e + " | " + k);
-        if (k - e < 0.5) return true;
+        if( k.equals(e)) return false;
+        else if (k - e > 0.7) return true;
         else return false;
     }
 
@@ -280,7 +209,7 @@ public class MultipleScheduler {
     public boolean isSame(HashMap<Integer, ArrayList<ActivityNode>> k, HashMap<Integer, ArrayList<ActivityNode>> v){
         return k.equals(v);
     }  //Done
-    //Hi
+
     public ArrayList<Double> calOthers(int index, List<ArrayList<Double>> allPowerUsage){
         ArrayList<Double> result = new ArrayList<Double>();
         for(int i=0;i<MultiScheduler.TIME_SLOTS;i++){
