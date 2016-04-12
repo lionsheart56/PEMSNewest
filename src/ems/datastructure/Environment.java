@@ -23,7 +23,7 @@ public class Environment {
 		ProfileLoader loader = new ProfileLoader();
 		activitySchedule = loader.loadSchedule(schedulePath);
 		electricityPriceProfile = loader.loadElectricityPrice("./_input_data/electricityPrice.xml");
-		solarPowerProfile = loader.loadSolar("./_input_data/re.xml", 3, 7, 1);
+		solarPowerProfile = loader.loadSolar("./_input_data/re.xml", 1, 1, 1);
 		applianceConsumption = loader.loadOperationEnergy("./_input_data/energyProfile.xml");
 		applianceStandbyPower = loader.loadStandbyEnergy("./_input_data/energyProfile.xml");
 		setActPowerConsumption();

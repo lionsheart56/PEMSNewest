@@ -21,7 +21,7 @@ public class MultipleScheduler {
     public double maxPower = 0.0;
 
     private int numOfHome = 0;
-
+    private double acceptDiff = 1.0;
 
     public MultipleScheduler(String[] args){
 
@@ -66,7 +66,7 @@ public class MultipleScheduler {
         double newPAR = 0.0;
         double lastPower = maxPower;
         boolean change = true;
-        int maxEpoch = 50;
+        int maxEpoch = 40;
         int iteration = 1;
         double rate = 1.4;
         double oldCost = calCost(lastCost, lastPower);
@@ -95,7 +95,10 @@ public class MultipleScheduler {
             }
             newPAR = getPar(finalPowerUsage);
             double newCost = calCost(finalCost, maxPower);
-            if(!isAccept(minPAR, lastPAR) || !checkTotalCost(oldCost, newCost)){
+            if(lastPAR < 3){
+                acceptDiff = 0.3;
+            }
+            if(!isAccept(minPAR, lastPAR)){//|| !checkTotalCost(oldCost, newCost)){
                 steps = 0;
                 //maxEpoch +=10;
                 rate += 0.15;
@@ -138,8 +141,8 @@ public class MultipleScheduler {
         System.out.println("New Peak-to-Average Ratio : " + nf.format(getPar(finalPowerUsage)));
         System.out.println("Old Peak Power : " + nf.format(lastPower));
         System.out.println("New Peak Power : " + nf.format(maxPower));
-        System.out.println("Old Total Cost per Day : " + nf.format(calCost(lastCost, lastPower)));
-        System.out.println("New Total Cost per Day : " + nf.format(calCost(finalCost, maxPower)));
+        System.out.println("Old Total Cost : " + nf.format(calCost(lastCost, lastPower) + giveYouInteger(lastPower)*236));
+        System.out.println("New Total Cost : " + nf.format(calCost(finalCost, maxPower) + giveYouInteger(maxPower)*236));
         System.out.println("\n======= Computation Time ========");
         System.out.println("Second:" + nf.format(duration/1000.0));
         System.out.println("Minute:" + nf.format(duration/60000.0));
@@ -155,12 +158,13 @@ public class MultipleScheduler {
     }
 
     public double calCost(ArrayList<Double> eCost, double peak){
-        double basicCharge = giveYouInteger(peak) * 236 / 30.0;
+        double basicCharge = giveYouInteger(peak) * 236;
         double sum = 0.0;
         for(int i = 0; i < numOfHome ; i++){
             sum += eCost.get(i);
         }
-        return sum+basicCharge;
+        return sum;
+        //return sum+basicCharge;
     }
 
     public boolean checkCost(ArrayList<Double> lastCost, ArrayList<Double> curCost, double interest){
@@ -182,7 +186,7 @@ public class MultipleScheduler {
     public boolean isAccept(Double e, Double k){
        // System.out.println(e + " | " + k);
         if( k.equals(e)) return false;
-        else if (k - e > 0.7) return true;
+        else if (k - e > acceptDiff) return true;
         else return false;
     }
 

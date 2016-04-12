@@ -1,29 +1,29 @@
 <electricityPrice>
 	<TOU>
-		<price id="0">3.65</price>
-		<price id="1">3.65</price>
-		<price id="2">3.65</price>
-		<price id="3">3.65</price>
-		<price id="4">3.65</price>
-		<price id="5">3.65</price>
-		<price id="6">3.65</price>
-		<price id="7">3.65</price>
-		<price id="8">5.40</price>
-		<price id="9">5.40</price>
-		<price id="10">5.40</price>
-		<price id="11">5.40</price>
-		<price id="12">5.40</price>
-		<price id="13">5.40</price>
-		<price id="14">5.40</price>
-		<price id="15">5.40</price>
-		<price id="16">5.40</price>
-		<price id="17">5.40</price>
-		<price id="18">5.40</price>
-		<price id="19">5.40</price>
-		<price id="20">5.40</price>
-		<price id="21">5.40</price>
-		<price id="22">3.65</price>
-		<price id="23">3.65</price>
+		<price id="0">1.75</price>
+		<price id="1">1.75</price>
+		<price id="2">1.75</price>
+		<price id="3">1.75</price>
+		<price id="4">1.75</price>
+		<price id="5">1.75</price>
+		<price id="6">1.75</price>
+		<price id="7">3.70</price>
+		<price id="8">3.70</price>
+		<price id="9">3.70</price>
+		<price id="10">3.70</price>
+		<price id="11">3.70</price>
+		<price id="12">3.70</price>
+		<price id="13">3.70</price>
+		<price id="14">3.70</price>
+		<price id="15">3.70</price>
+		<price id="16">3.70</price>
+		<price id="17">3.70</price>
+		<price id="18">3.70</price>
+		<price id="19">3.70</price>
+		<price id="20">3.70</price>
+		<price id="21">3.70</price>
+		<price id="22">1.75</price>
+		<price id="23">1.75</price>
 	</TOU>
 	<!--<TOUCPP>
 		<price id="0">3.65</price>

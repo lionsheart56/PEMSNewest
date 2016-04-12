@@ -36,7 +36,7 @@
 		<standby>0</standby>
 	</energy>
 	<energy id="PC">
-		<operation>500</operation>
+		<operation>450</operation>
 		<standby>4.93</standby>	
 	</energy>
 	<energy id="Laptop"> <!-- MacBook Pro 13.3 -->

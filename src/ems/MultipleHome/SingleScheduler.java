@@ -12,8 +12,8 @@ import ems.datastructure.HybridParticle;
 public class SingleScheduler {
     private final int MAX_PARTICLES = 1000;
     private final int TIME_SLOTS = MultiScheduler.TIME_SLOTS;
-    private final int NUM_BATTERY = 25;
-    private final int BATTERY_AH = 65;
+    private final int NUM_BATTERY = 8;
+    private final int BATTERY_AH = 13;
     private final int BATTERY_VOL = 12;
     private final double MAX_BATTERY_CAPACITY = (double)(NUM_BATTERY * BATTERY_AH * BATTERY_VOL) / 1000;
 
