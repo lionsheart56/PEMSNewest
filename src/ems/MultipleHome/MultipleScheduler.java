@@ -71,7 +71,7 @@ public class MultipleScheduler {
         double rate = 1.4;
         double oldCost = calCost(lastCost, lastPower);
 
-        while(change && iteration < 6) {
+        while(change && iteration < 4) {
             System.out.println("Iteration : " + iteration++);
             while (steps++ < maxEpoch) {
 
@@ -95,13 +95,13 @@ public class MultipleScheduler {
             }
             newPAR = getPar(finalPowerUsage);
             double newCost = calCost(finalCost, maxPower);
-            if(lastPAR < 3){
+            if(lastPAR < 3.0){
                 acceptDiff = 0.3;
             }
             if(!isAccept(minPAR, lastPAR)){//|| !checkTotalCost(oldCost, newCost)){
                 steps = 0;
                 //maxEpoch +=10;
-                rate += 0.15;
+                rate += 0.2;
                 System.out.println("Not Accept: [ "+ minPAR+ " ] " + "[ " + lastPAR +" ]");
                 System.out.println("Now Rate : " + rate);
             }else{
@@ -195,6 +195,7 @@ public class MultipleScheduler {
         double MAX = 0.0;
         double inTime = 0.0;
         double Avg = 0.0;
+        int hour = 0;
         for(int i=0;i<MultiScheduler.TIME_SLOTS; i++){
             inTime = 0.0;
             for(int j=0; j<allPowerUsage.size();j++) {
@@ -202,12 +203,17 @@ public class MultipleScheduler {
                 inTime = inTime + temp;
             }  // Calculate all power in i hour
             Avg = Avg + inTime;
-            if(inTime > MAX) MAX = inTime;
+            if(inTime > MAX) {
+                MAX = inTime;
+                hour = i;
+            }
         }
         Avg = Avg / 24.0;
         PAR = MAX / Avg;
         this.maxPower = MAX;
+       // System.out.println("Max Hour: " + hour);
         return PAR;
+
     }
 
     public boolean isSame(HashMap<Integer, ArrayList<ActivityNode>> k, HashMap<Integer, ArrayList<ActivityNode>> v){
